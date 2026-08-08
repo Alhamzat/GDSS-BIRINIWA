@@ -1,0 +1,3520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GDSS BIRNIWA — Student Result Management System</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        :root {
+            --primary: #1a4d2e;
+            --primary-light: #2d7d4a;
+            --primary-dark: #0f331f;
+            --accent: #4CAF50;
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --danger: #dc3545;
+            --warning: #f59e0b;
+            --success: #22c55e;
+            --info: #3b82f6;
+            --transition: 0.3s ease;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+            background: none;
+            font-size: 0.95rem;
+        }
+        input,
+        select,
+        textarea {
+            font-size: 0.95rem;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            width: 100%;
+            background: #fff;
+            transition: var(--transition);
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(45, 125, 74, 0.15);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th,
+        td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: var(--primary);
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        tr:hover {
+            background: rgba(26, 77, 46, 0.04);
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--border);
+            color: var(--text-light);
+        }
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .badge-danger {
+            background: #fce4ec;
+            color: #b71c1c;
+        }
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .badge-primary {
+            background: #d1e7dd;
+            color: #0a3622;
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        #loginPage {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+            padding: 20px;
+        }
+        .login-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 40px 35px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .login-container .school-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .login-container .school-header h1 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+        .login-container .school-header p {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
+        .login-tabs {
+            display: flex;
+            gap: 6px;
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+        .login-tabs button {
+            flex: 1;
+            padding: 10px 0;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            color: var(--text-light);
+            background: transparent;
+        }
+        .login-tabs button.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(26, 77, 46, 0.3);
+        }
+        .login-form .form-group {
+            margin-bottom: 16px;
+        }
+        .login-form .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+        .login-form .form-group input {
+            padding: 12px 14px;
+        }
+        .login-form .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: var(--transition);
+            margin-top: 6px;
+        }
+        .login-form .btn-login:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 77, 46, 0.3);
+        }
+        .login-error {
+            color: var(--danger);
+            font-size: 0.85rem;
+            text-align: center;
+            margin-top: 10px;
+            min-height: 24px;
+        }
+        .login-hint {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 12px;
+            background: var(--bg);
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+        .login-hint strong {
+            color: var(--primary);
+        }
+
+        /* ===== APP LAYOUT ===== */
+        #app {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+        }
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 260px;
+            background: var(--primary-dark);
+            color: #fff;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sidebar .brand {
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar .brand img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #fff;
+            padding: 2px;
+        }
+        .sidebar .brand .brand-text h2 {
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+        .sidebar .brand .brand-text small {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+        .sidebar .nav-section {
+            padding: 0 12px;
+        }
+        .sidebar .nav-section .nav-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.5;
+            padding: 8px 12px 4px;
+            font-weight: 700;
+        }
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.75);
+            transition: var(--transition);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin: 1px 0;
+            position: relative;
+        }
+        .sidebar .nav-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        .sidebar .nav-item.active {
+            background: rgba(76, 175, 80, 0.25);
+            color: #fff;
+            border-left: 3px solid var(--accent);
+        }
+        .sidebar .nav-item .icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        .sidebar .nav-item .badge-nav {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 1px 10px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+        }
+        .sidebar .nav-item.logout-item {
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 16px;
+            margin-top: 16px;
+            color: rgba(255, 150, 150, 0.7);
+        }
+        .sidebar .nav-item.logout-item:hover {
+            color: #ff6b6b;
+            background: rgba(255, 0, 0, 0.08);
+        }
+        .sidebar .user-info {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: auto;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar .user-info .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .sidebar .user-info .user-detail {
+            line-height: 1.3;
+        }
+        .sidebar .user-info .user-detail .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .sidebar .user-info .user-detail .role {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 24px 30px 40px;
+            min-height: 100vh;
+            width: calc(100% - 260px);
+        }
+        .main-content .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .main-content .page-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        .main-content .page-header .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        .main-content .page-header .breadcrumb span {
+            color: var(--primary);
+        }
+
+        /* ===== DASHBOARD CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px 22px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-light);
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        .stat-card .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        .stat-card .stat-icon {
+            float: right;
+            font-size: 2rem;
+            opacity: 0.15;
+        }
+        .stat-card.green {
+            border-left-color: var(--success);
+        }
+        .stat-card.blue {
+            border-left-color: var(--info);
+        }
+        .stat-card.orange {
+            border-left-color: var(--warning);
+        }
+        .stat-card.red {
+            border-left-color: var(--danger);
+        }
+        .stat-card.purple {
+            border-left-color: #8b5cf6;
+        }
+
+        /* ===== CARDS & SECTIONS ===== */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px 28px;
+            margin-bottom: 24px;
+        }
+        .card .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .card .card-header h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+        .card .card-header .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .card .card-body {
+            overflow-x: auto;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            background: var(--border);
+            color: var(--text);
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #16a34a;
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        .btn-warning {
+            background: var(--warning);
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background: #d97706;
+        }
+        .btn-info {
+            background: var(--info);
+            color: #fff;
+        }
+        .btn-info:hover {
+            background: #2563eb;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--text);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 0.75rem;
+        }
+        .btn-xs {
+            padding: 2px 10px;
+            font-size: 0.7rem;
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ===== SEARCH BAR ===== */
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .search-bar input,
+        .search-bar select {
+            max-width: 260px;
+            padding: 8px 14px;
+        }
+        .search-bar .btn {
+            padding: 8px 18px;
+        }
+
+        /* ===== TABLE WRAPPER ===== */
+        .table-wrap {
+            overflow-x: auto;
+            margin-top: 8px;
+        }
+        .table-wrap table {
+            min-width: 600px;
+        }
+        .table-wrap .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+        .table-wrap .empty-state .icon-big {
+            font-size: 3rem;
+            opacity: 0.3;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal {
+            background: var(--card);
+            border-radius: var(--radius);
+            max-width: 640px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 28px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.25s ease;
+        }
+        .modal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .modal .modal-header h2 {
+            font-size: 1.3rem;
+        }
+        .modal .modal-header .close-btn {
+            font-size: 1.6rem;
+            line-height: 1;
+            color: var(--text-light);
+            padding: 0 6px;
+        }
+        .modal .modal-header .close-btn:hover {
+            color: var(--danger);
+        }
+        .modal .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .modal .form-row .full {
+            grid-column: 1 / -1;
+        }
+        .modal .form-group {
+            margin-bottom: 14px;
+        }
+        .modal .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+        .modal .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ===== HAMBURGER (mobile) ===== */
+        .hamburger {
+            display: none;
+            font-size: 1.8rem;
+            background: none;
+            border: none;
+            color: var(--primary-dark);
+            padding: 4px 8px;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+        }
+        .sidebar-overlay.open {
+            display: block;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay.open {
+                display: block;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px 16px 30px;
+            }
+            .hamburger {
+                display: block;
+            }
+            .modal .form-row {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+        @media (max-width: 576px) {
+            .login-container {
+                padding: 28px 20px;
+            }
+            .login-container .school-header h1 {
+                font-size: 1.3rem;
+            }
+            .stat-card .stat-number {
+                font-size: 1.5rem;
+            }
+            .card {
+                padding: 16px;
+            }
+            .modal {
+                padding: 20px 16px;
+            }
+            .search-bar input,
+            .search-bar select {
+                max-width: 100%;
+            }
+            .page-header h1 {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ===== UTILITY ===== */
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: var(--text-light);
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-16 {
+            margin-top: 16px;
+        }
+        .mb-16 {
+            margin-bottom: 16px;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .gap-12 {
+            gap: 12px;
+        }
+        .wrap {
+            flex-wrap: wrap;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== CHARTS (simple) ===== */
+        .chart-bar {
+            display: flex;
+            align-items: flex-end;
+            height: 120px;
+            gap: 12px;
+            padding-top: 8px;
+        }
+        .chart-bar .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .chart-bar .bar-item .bar {
+            width: 100%;
+            max-width: 40px;
+            background: var(--primary-light);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            transition: var(--transition);
+        }
+        .chart-bar .bar-item .bar-label {
+            font-size: 0.65rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        /* ===== REPORT CARD PRINT ===== */
+        @media print {
+            .sidebar,
+            .hamburger,
+            .sidebar-overlay,
+            .no-print {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 10px !important;
+                width: 100% !important;
+            }
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            .modal-overlay {
+                display: none !important;
+            }
+            #app {
+                display: block !important;
+            }
+            #loginPage {
+                display: none !important;
+            }
+            .report-card-print {
+                page-break-after: always;
+            }
+            .btn {
+                display: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 50px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* ===== PROFILE VIEW ===== */
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 24px;
+        }
+        .profile-info-grid .info-item label {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .profile-info-grid .info-item p {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 2px;
+        }
+        @media (max-width: 576px) {
+            .profile-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== BROADSHEET ===== */
+        .broadsheet-title {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .broadsheet-title h2 {
+            color: var(--primary);
+        }
+        .broadsheet-title p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* grade colors */
+        .grade-A {
+            color: #065f46;
+            font-weight: 700;
+        }
+        .grade-B {
+            color: #1e40af;
+            font-weight: 700;
+        }
+        .grade-C {
+            color: #92400e;
+            font-weight: 700;
+        }
+        .grade-D {
+            color: #78350f;
+            font-weight: 700;
+        }
+        .grade-E {
+            color: #b45309;
+            font-weight: 700;
+        }
+        .grade-F {
+            color: #b91c1c;
+            font-weight: 700;
+        }
+
+        /* student portal */
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .portal-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        .portal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+        }
+        .portal-card .big-icon {
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+        }
+        .portal-card h4 {
+            font-size: 1rem;
+        }
+        .portal-card p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== LOGIN PAGE ========== -->
+    <div id="loginPage">
+        <div class="login-container">
+            <div class="school-header">
+                <h1>GDSS BIRNIWA</h1>
+                <p>Student Result Management System</p>
+                <p style="font-size:0.75rem;color:var(--text-light);">Discipline &amp; Dedication</p>
+            </div>
+            <div class="login-tabs" id="loginTabs">
+                <button class="active" data-role="admin">Admin</button>
+                <button data-role="student">Student</button>
+                <button data-role="staff">Staff</button>
+            </div>
+            <form class="login-form" id="loginForm" autocomplete="off">
+                <div id="loginFields">
+                    <!-- dynamic fields -->
+                </div>
+                <button type="submit" class="btn-login">Login</button>
+                <div class="login-error" id="loginError"></div>
+                <div class="login-hint" id="loginHint">
+                    <strong>Admin:</strong> admin / admin123 &nbsp;|&nbsp;
+                    <strong>Student:</strong> GDSS/001 / 123456 &nbsp;|&nbsp;
+                    <strong>Staff:</strong> STF001 / 123456
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========== APP ========== -->
+    <div id="app">
+        <div class="app-container">
+
+            <!-- Sidebar Overlay (mobile) -->
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+            <!-- ===== SIDEBAR ===== -->
+            <aside class="sidebar" id="sidebar">
+                <div class="brand">
+                    <img id="sidebarLogo" src="" alt="Logo" onerror="this.style.display='none'" />
+                    <div class="brand-text">
+                        <h2 id="sidebarSchoolName">GDSS BIRNIWA</h2>
+                        <small>Result Management</small>
+                    </div>
+                </div>
+                <div class="nav-section" id="adminNav">
+                    <div class="nav-label">Main</div>
+                    <div class="nav-item active" data-page="dashboard"><span class="icon">📊</span> Dashboard</div>
+                    <div class="nav-item" data-page="students"><span class="icon">👨‍🎓</span> Students</div>
+                    <div class="nav-item" data-page="staff"><span class="icon">👨‍🏫</span> Staff</div>
+                    <div class="nav-item" data-page="subjects"><span class="icon">📚</span> Subjects</div>
+                    <div class="nav-item" data-page="results"><span class="icon">📝</span> Results</div>
+                    <div class="nav-item" data-page="attendance"><span class="icon">📋</span> Attendance</div>
+                    <div class="nav-item" data-page="broadsheet"><span class="icon">📊</span> Broadsheet</div>
+                    <div class="nav-item" data-page="reportcard"><span class="icon">📄</span> Report Card</div>
+                    <div class="nav-item" data-page="settings"><span class="icon">⚙️</span> Settings</div>
+                    <div class="nav-item logout-item" id="logoutBtn"><span class="icon">🚪</span> Logout</div>
+                </div>
+                <div class="nav-section" id="studentNav" style="display:none;">
+                    <div class="nav-label">Student Portal</div>
+                    <div class="nav-item active" data-page="s-dashboard"><span class="icon">📊</span> Dashboard</div>
+                    <div class="nav-item" data-page="s-profile"><span class="icon">👤</span> My Profile</div>
+                    <div class="nav-item" data-page="s-results"><span class="icon">📝</span> My Results</div>
+                    <div class="nav-item" data-page="s-attendance"><span class="icon">📋</span> My Attendance</div>
+                    <div class="nav-item" data-page="s-reportcard"><span class="icon">📄</span> Report Card</div>
+                    <div class="nav-item" data-page="s-password"><span class="icon">🔑</span> Change Password</div>
+                    <div class="nav-item logout-item" id="logoutBtnStudent"><span class="icon">🚪</span> Logout</div>
+                </div>
+                <div class="nav-section" id="staffNav" style="display:none;">
+                    <div class="nav-label">Staff Portal</div>
+                    <div class="nav-item active" data-page="t-dashboard"><span class="icon">📊</span> Dashboard</div>
+                    <div class="nav-item" data-page="t-students"><span class="icon">👨‍🎓</span> Students</div>
+                    <div class="nav-item" data-page="t-results"><span class="icon">📝</span> Enter Results</div>
+                    <div class="nav-item" data-page="t-attendance"><span class="icon">📋</span> Record Attendance</div>
+                    <div class="nav-item" data-page="t-password"><span class="icon">🔑</span> Change Password</div>
+                    <div class="nav-item logout-item" id="logoutBtnStaff"><span class="icon">🚪</span> Logout</div>
+                </div>
+                <div class="user-info">
+                    <div class="avatar" id="sidebarAvatar">A</div>
+                    <div class="user-detail">
+                        <div class="name" id="sidebarUserName">Admin</div>
+                        <div class="role" id="sidebarUserRole">Administrator</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ===== MAIN CONTENT ===== -->
+            <main class="main-content">
+                <!-- Top Bar -->
+                <div class="page-header">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <button class="hamburger" id="hamburgerBtn">☰</button>
+                        <h1 id="pageTitle">Dashboard</h1>
+                    </div>
+                    <div class="breadcrumb" id="breadcrumb">Home / <span>Dashboard</span></div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: DASHBOARD (Admin) -->
+                <!-- ============================================================ -->
+                <div id="page-dashboard" class="page-content">
+                    <div class="stats-grid" id="dashboardStats">
+                        <div class="stat-card green"><div class="stat-icon">👨‍🎓</div><div class="stat-number" id="statStudents">0</div><div class="stat-label">Total Students</div></div>
+                        <div class="stat-card blue"><div class="stat-icon">👨‍🏫</div><div class="stat-number" id="statStaff">0</div><div class="stat-label">Total Staff</div></div>
+                        <div class="stat-card orange"><div class="stat-icon">📚</div><div class="stat-number" id="statSubjects">0</div><div class="stat-label">Total Subjects</div></div>
+                        <div class="stat-card red"><div class="stat-icon">📝</div><div class="stat-number" id="statResults">0</div><div class="stat-label">Total Results</div></div>
+                        <div class="stat-card purple"><div class="stat-icon">🏫</div><div class="stat-number" id="statClasses">0</div><div class="stat-label">Total Classes</div></div>
+                        <div class="stat-card green"><div class="stat-icon">📋</div><div class="stat-number" id="statAttendance">0</div><div class="stat-label">Attendance Records</div></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"><h3>📈 Quick Actions</h3></div>
+                        <div class="card-body" style="display:flex;flex-wrap:wrap;gap:10px;">
+                            <button class="btn btn-primary" onclick="showPage('students')">➕ Add Student</button>
+                            <button class="btn btn-success" onclick="showPage('staff')">➕ Add Staff</button>
+                            <button class="btn btn-info" onclick="showPage('results')">📝 Enter Results</button>
+                            <button class="btn btn-warning" onclick="showPage('attendance')">📋 Take Attendance</button>
+                            <button class="btn btn-primary" onclick="showPage('broadsheet')">📊 View Broadsheet</button>
+                            <button class="btn btn-success" onclick="generateBroadsheet()">📄 Generate Broadsheet</button>
+                            <button class="btn btn-danger" onclick="if(confirm('Promote all students?'))promoteStudents()">⬆️ Promote Students</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"><h3>📊 Recent Results</h3></div>
+                        <div class="card-body">
+                            <div class="table-wrap" id="recentResultsTable"><p class="text-muted">No recent results.</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: STUDENTS (Admin) -->
+                <!-- ============================================================ -->
+                <div id="page-students" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>👨‍🎓 Student Management</h3>
+                            <div class="actions">
+                                <button class="btn btn-primary" onclick="openStudentModal()">➕ Add Student</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-bar">
+                                <input type="text" id="studentSearchInput" placeholder="Search by name, admission..." oninput="renderStudents()" />
+                                <select id="studentClassFilter" onchange="renderStudents()">
+                                    <option value="">All Classes</option>
+                                    <option value="SS1A">SS1A</option><option value="SS1B">SS1B</option>
+                                    <option value="SS1C">SS1C</option><option value="SS1D">SS1D</option>
+                                    <option value="SS1E">SS1E</option>
+                                    <option value="SS2A">SS2A</option><option value="SS2B">SS2B</option>
+                                    <option value="SS2C">SS2C</option><option value="SS2D">SS2D</option>
+                                    <option value="SS2E">SS2E</option>
+                                    <option value="SS3A">SS3A</option><option value="SS3B">SS3B</option>
+                                    <option value="SS3C">SS3C</option><option value="SS3D">SS3D</option>
+                                    <option value="SS3E">SS3E</option>
+                                </select>
+                                <button class="btn btn-outline" onclick="document.getElementById('studentSearchInput').value='';renderStudents();">Clear</button>
+                            </div>
+                            <div class="table-wrap" id="studentsTable"><p class="text-muted">Loading...</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: STAFF (Admin) -->
+                <!-- ============================================================ -->
+                <div id="page-staff" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>👨‍🏫 Staff Management</h3>
+                            <div class="actions">
+                                <button class="btn btn-primary" onclick="openStaffModal()">➕ Add Staff</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-bar">
+                                <input type="text" id="staffSearchInput" placeholder="Search by name, ID..." oninput="renderStaff()" />
+                                <button class="btn btn-outline" onclick="document.getElementById('staffSearchInput').value='';renderStaff();">Clear</button>
+                            </div>
+                            <div class="table-wrap" id="staffTable"><p class="text-muted">Loading...</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: SUBJECTS (Admin) -->
+                <!-- ============================================================ -->
+                <div id="page-subjects" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📚 Subject Management</h3>
+                            <div class="actions">
+                                <button class="btn btn-primary" onclick="openSubjectModal()">➕ Add Subject</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-wrap" id="subjectsTable"><p class="text-muted">Loading...</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: RESULTS (Admin) -->
+                <!-- ============================================================ -->
+                <div id="page-results" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📝 Result Management</h3>
+                            <div class="actions">
+                                <button class="btn btn-primary" onclick="openResultModal()">➕ Enter Result</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-bar">
+                                <input type="text" id="resultSearchInput" placeholder="Search by student or admission..." oninput="renderResults()" />
+                                <select id="resultClassFilter" onchange="renderResults()">
+                                    <option value="">All Classes</option>
+                                    <option value="SS1A">SS1A</option><option value="SS1B">SS1B</option>
+                                    <option value="SS1C">SS1C</option><option value="SS1D">SS1D</option>
+                                    <option value="SS1E">SS1E</option>
+                                    <option value="SS2A">SS2A</option><option value="SS2B">SS2B</option>
+                                    <option value="SS2C">SS2C</option><option value="SS2D">SS2D</option>
+                                    <option value="SS2E">SS2E</option>
+                                    <option value="SS3A">SS3A</option><option value="SS3B">SS3B</option>
+                                    <option value="SS3C">SS3C</option><option value="SS3D">SS3D</option>
+                                    <option value="SS3E">SS3E</option>
+                                </select>
+                                <select id="resultTermFilter" onchange="renderResults()">
+                                    <option value="">All Terms</option>
+                                    <option value="First">First</option>
+                                    <option value="Second">Second</option>
+                                    <option value="Third">Third</option>
+                                </select>
+                                <button class="btn btn-outline" onclick="document.getElementById('resultSearchInput').value='';renderResults();">Clear</button>
+                            </div>
+                            <div class="table-wrap" id="resultsTable"><p class="text-muted">Loading...</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: ATTENDANCE (Admin) -->
+                <!-- ============================================================ -->
+                <div id="page-attendance" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📋 Attendance Management</h3>
+                            <div class="actions">
+                                <button class="btn btn-primary" onclick="openAttendanceModal()">➕ Record Attendance</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-bar">
+                                <input type="text" id="attendanceSearchInput" placeholder="Search by student..." oninput="renderAttendance()" />
+                                <select id="attendanceClassFilter" onchange="renderAttendance()">
+                                    <option value="">All Classes</option>
+                                    <option value="SS1A">SS1A</option><option value="SS1B">SS1B</option>
+                                    <option value="SS1C">SS1C</option><option value="SS1D">SS1D</option>
+                                    <option value="SS1E">SS1E</option>
+                                    <option value="SS2A">SS2A</option><option value="SS2B">SS2B</option>
+                                    <option value="SS2C">SS2C</option><option value="SS2D">SS2D</option>
+                                    <option value="SS2E">SS2E</option>
+                                    <option value="SS3A">SS3A</option><option value="SS3B">SS3B</option>
+                                    <option value="SS3C">SS3C</option><option value="SS3D">SS3D</option>
+                                    <option value="SS3E">SS3E</option>
+                                </select>
+                                <button class="btn btn-outline" onclick="document.getElementById('attendanceSearchInput').value='';renderAttendance();">Clear</button>
+                            </div>
+                            <div class="table-wrap" id="attendanceTable"><p class="text-muted">Loading...</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: BROADSHEET -->
+                <!-- ============================================================ -->
+                <div id="page-broadsheet" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📊 Broadsheet</h3>
+                            <div class="actions">
+                                <button class="btn btn-success" onclick="generateBroadsheet()">🔄 Generate</button>
+                                <button class="btn btn-info" onclick="printBroadsheet()">🖨️ Print</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-bar">
+                                <select id="broadsheetClass" onchange="generateBroadsheet()">
+                                    <option value="SS1A">SS1A</option><option value="SS1B">SS1B</option>
+                                    <option value="SS1C">SS1C</option><option value="SS1D">SS1D</option>
+                                    <option value="SS1E">SS1E</option>
+                                    <option value="SS2A">SS2A</option><option value="SS2B">SS2B</option>
+                                    <option value="SS2C">SS2C</option><option value="SS2D">SS2D</option>
+                                    <option value="SS2E">SS2E</option>
+                                    <option value="SS3A">SS3A</option><option value="SS3B">SS3B</option>
+                                    <option value="SS3C">SS3C</option><option value="SS3D">SS3D</option>
+                                    <option value="SS3E">SS3E</option>
+                                </select>
+                                <select id="broadsheetTerm" onchange="generateBroadsheet()">
+                                    <option value="First">First</option>
+                                    <option value="Second">Second</option>
+                                    <option value="Third">Third</option>
+                                </select>
+                                <input type="text" id="broadsheetSession" placeholder="Session (e.g. 2024/2025)" value="2024/2025" onchange="generateBroadsheet()" style="max-width:160px;" />
+                            </div>
+                            <div id="broadsheetContainer"><p class="text-muted">Select class and term, then click Generate.</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: REPORT CARD -->
+                <!-- ============================================================ -->
+                <div id="page-reportcard" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📄 Generate Report Card</h3>
+                            <div class="actions">
+                                <button class="btn btn-success" onclick="generateReportCard()">🔄 Generate</button>
+                                <button class="btn btn-info" onclick="printReportCard()">🖨️ Print</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-bar">
+                                <select id="reportStudentSelect" style="max-width:280px;"></select>
+                                <select id="reportTermSelect" onchange="generateReportCard()">
+                                    <option value="First">First</option>
+                                    <option value="Second">Second</option>
+                                    <option value="Third">Third</option>
+                                </select>
+                                <input type="text" id="reportSessionInput" placeholder="Session" value="2024/2025" style="max-width:160px;" onchange="generateReportCard()" />
+                                <button class="btn btn-primary" onclick="generateReportCard()">Generate</button>
+                            </div>
+                            <div id="reportCardContainer"><p class="text-muted">Select a student and click Generate.</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: SETTINGS (Admin) -->
+                <!-- ============================================================ -->
+                <div id="page-settings" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><h3>⚙️ School Settings</h3></div>
+                        <div class="card-body">
+                            <form id="settingsForm" onsubmit="saveSettings(event)">
+                                <div class="form-row">
+                                    <div class="form-group"><label>School Name</label><input type="text" id="setSchoolName" value="GDSS BIRNIWA" /></div>
+                                    <div class="form-group"><label>Motto</label><input type="text" id="setMotto" value="Discipline and Dedication" /></div>
+                                    <div class="form-group"><label>Address</label><input type="text" id="setAddress" value="P.M.B 026 Birniwa Local Government, Jigawa State, Nigeria" /></div>
+                                    <div class="form-group"><label>Phone</label><input type="text" id="setPhone" value="08012345678" /></div>
+                                    <div class="form-group"><label>Email</label><input type="email" id="setEmail" value="info@gdssbirniwa.edu.ng" /></div>
+                                    <div class="form-group"><label>Academic Session</label><input type="text" id="setSession" value="2024/2025" /></div>
+                                    <div class="form-group"><label>Current Term</label>
+                                        <select id="setTerm"><option value="First">First</option><option value="Second">Second</option><option value="Third">Third</option></select>
+                                    </div>
+                                    <div class="form-group"><label>School Logo URL</label><input type="text" id="setLogo" placeholder="Paste image URL or data URI" /></div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">💾 Save Settings</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>🖼️ Logo Preview</h3></div>
+                        <div class="card-body">
+                            <img id="settingsLogoPreview" src="" alt="Logo" style="max-height:100px;border-radius:8px;background:#f0f2f5;padding:8px;" />
+                            <p class="text-muted mt-8">Paste a logo image URL or data URI above.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header"><h3>🗄️ Data Management</h3></div>
+                        <div class="card-body" style="display:flex;gap:12px;flex-wrap:wrap;">
+                            <button class="btn btn-danger" onclick="if(confirm('Clear all data?')){localStorage.clear();location.reload();}">🗑️ Clear All Data</button>
+                            <button class="btn btn-info" onclick="exportData()">📤 Export Data</button>
+                            <button class="btn btn-warning" onclick="document.getElementById('importFileInput').click()">📥 Import Data</button>
+                            <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importData(event)" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- STUDENT PORTAL PAGES -->
+                <!-- ============================================================ -->
+                <div id="page-s-dashboard" class="page-content" style="display:none;">
+                    <div class="stats-grid" id="studentDashboardStats">
+                        <div class="stat-card green"><div class="stat-number" id="sStatResults">0</div><div class="stat-label">Results</div></div>
+                        <div class="stat-card blue"><div class="stat-number" id="sStatAvg">0</div><div class="stat-label">Average</div></div>
+                        <div class="stat-card orange"><div class="stat-number" id="sStatPosition">-</div><div class="stat-label">Position</div></div>
+                        <div class="stat-card purple"><div class="stat-number" id="sStatAttendance">0%</div><div class="stat-label">Attendance</div></div>
+                    </div>
+                    <div class="portal-grid">
+                        <div class="portal-card" onclick="showPage('s-profile')"><div class="big-icon">👤</div><h4>My Profile</h4><p>View personal information</p></div>
+                        <div class="portal-card" onclick="showPage('s-results')"><div class="big-icon">📝</div><h4>My Results</h4><p>View all results</p></div>
+                        <div class="portal-card" onclick="showPage('s-attendance')"><div class="big-icon">📋</div><h4>My Attendance</h4><p>View attendance records</p></div>
+                        <div class="portal-card" onclick="showPage('s-reportcard')"><div class="big-icon">📄</div><h4>Report Card</h4><p>Print your report card</p></div>
+                        <div class="portal-card" onclick="showPage('s-password')"><div class="big-icon">🔑</div><h4>Change Password</h4><p>Update your password</p></div>
+                    </div>
+                </div>
+
+                <div id="page-s-profile" class="page-content" style="display:none;">
+                    <div class="card"><div class="card-header"><h3>👤 My Profile</h3></div><div class="card-body" id="studentProfileView"></div></div>
+                </div>
+
+                <div id="page-s-results" class="page-content" style="display:none;">
+                    <div class="card"><div class="card-header"><h3>📝 My Results</h3></div><div class="card-body"><div class="table-wrap" id="studentResultsView"></div></div></div>
+                </div>
+
+                <div id="page-s-attendance" class="page-content" style="display:none;">
+                    <div class="card"><div class="card-header"><h3>📋 My Attendance</h3></div><div class="card-body"><div class="table-wrap" id="studentAttendanceView"></div></div></div>
+                </div>
+
+                <div id="page-s-reportcard" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><h3>📄 My Report Card</h3><div class="actions"><button class="btn btn-info" onclick="printStudentReportCard()">🖨️ Print</button></div></div>
+                        <div class="card-body" id="studentReportCardView"></div>
+                    </div>
+                </div>
+
+                <div id="page-s-password" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><h3>🔑 Change Password</h3></div>
+                        <div class="card-body">
+                            <form id="studentPasswordForm" onsubmit="changeStudentPassword(event)">
+                                <div class="form-row">
+                                    <div class="form-group"><label>Current Password</label><input type="password" id="sCurrPass" required /></div>
+                                    <div class="form-group"><label>New Password</label><input type="password" id="sNewPass" required minlength="4" /></div>
+                                    <div class="form-group"><label>Confirm New Password</label><input type="password" id="sConfirmPass" required /></div>
+                                </div>
+                                <div class="form-actions"><button type="submit" class="btn btn-primary">Update Password</button></div>
+                                <div id="sPassMsg" class="text-muted mt-8"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- STAFF PORTAL PAGES -->
+                <!-- ============================================================ -->
+                <div id="page-t-dashboard" class="page-content" style="display:none;">
+                    <div class="stats-grid" id="staffDashboardStats">
+                        <div class="stat-card green"><div class="stat-number" id="tStatStudents">0</div><div class="stat-label">My Students</div></div>
+                        <div class="stat-card blue"><div class="stat-number" id="tStatResults">0</div><div class="stat-label">Results Entered</div></div>
+                        <div class="stat-card orange"><div class="stat-number" id="tStatAttendance">0</div><div class="stat-label">Attendance Records</div></div>
+                    </div>
+                    <div class="portal-grid">
+                        <div class="portal-card" onclick="showPage('t-students')"><div class="big-icon">👨‍🎓</div><h4>My Students</h4><p>View assigned students</p></div>
+                        <div class="portal-card" onclick="showPage('t-results')"><div class="big-icon">📝</div><h4>Enter Results</h4><p>Record student results</p></div>
+                        <div class="portal-card" onclick="showPage('t-attendance')"><div class="big-icon">📋</div><h4>Record Attendance</h4><p>Take attendance</p></div>
+                        <div class="portal-card" onclick="showPage('t-password')"><div class="big-icon">🔑</div><h4>Change Password</h4><p>Update your password</p></div>
+                    </div>
+                </div>
+
+                <div id="page-t-students" class="page-content" style="display:none;">
+                    <div class="card"><div class="card-header"><h3>👨‍🎓 My Students</h3></div><div class="card-body"><div class="table-wrap" id="staffStudentsView"></div></div></div>
+                </div>
+
+                <div id="page-t-results" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><h3>📝 Enter Results</h3><div class="actions"><button class="btn btn-primary" onclick="openStaffResultModal()">➕ Enter Result</button></div></div>
+                        <div class="card-body"><div class="table-wrap" id="staffResultsView"></div></div>
+                    </div>
+                </div>
+
+                <div id="page-t-attendance" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><h3>📋 Record Attendance</h3><div class="actions"><button class="btn btn-primary" onclick="openStaffAttendanceModal()">➕ Record</button></div></div>
+                        <div class="card-body"><div class="table-wrap" id="staffAttendanceView"></div></div>
+                    </div>
+                </div>
+
+                <div id="page-t-password" class="page-content" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><h3>🔑 Change Password</h3></div>
+                        <div class="card-body">
+                            <form id="staffPasswordForm" onsubmit="changeStaffPassword(event)">
+                                <div class="form-row">
+                                    <div class="form-group"><label>Current Password</label><input type="password" id="tCurrPass" required /></div>
+                                    <div class="form-group"><label>New Password</label><input type="password" id="tNewPass" required minlength="4" /></div>
+                                    <div class="form-group"><label>Confirm New Password</label><input type="password" id="tConfirmPass" required /></div>
+                                </div>
+                                <div class="form-actions"><button type="submit" class="btn btn-primary">Update Password</button></div>
+                                <div id="tPassMsg" class="text-muted mt-8"></div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ========== MODAL ========== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent">
+            <div class="modal-header">
+                <h2 id="modalTitle">Modal</h2>
+                <button class="close-btn" onclick="closeModal()">✕</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // DATA LAYER
+        // ================================================================
+        function getData(key, def) {
+            try { return JSON.parse(localStorage.getItem(key)) || def; } catch (e) { return def; }
+        }
+
+        function setData(key, val) {
+            localStorage.setItem(key, JSON.stringify(val));
+        }
+
+        function getStudents() { return getData('students', []); }
+
+        function setStudents(s) { setData('students', s); }
+
+        function getStaff() { return getData('staff', []); }
+
+        function setStaff(s) { setData('staff', s); }
+
+        function getSubjects() { return getData('subjects', []); }
+
+        function setSubjects(s) { setData('subjects', s); }
+
+        function getResults() { return getData('results', []); }
+
+        function setResults(r) { setData('results', r); }
+
+        function getAttendance() { return getData('attendance', []); }
+
+        function setAttendance(a) { setData('attendance', a); }
+
+        function getSettings() {
+            return getData('settings', {
+                schoolName: 'GDSS BIRNIWA',
+                motto: 'Discipline and Dedication',
+                address: 'P.M.B 026 Birniwa Local Government, Jigawa State, Nigeria',
+                phone: '08012345678',
+                email: 'info@gdssbirniwa.edu.ng',
+                session: '2024/2025',
+                term: 'First',
+                logo: ''
+            });
+        }
+
+        function setSettings(s) { setData('settings', s); }
+
+        function getClasses() {
+            return ['SS1A', 'SS1B', 'SS1C', 'SS1D', 'SS1E',
+                'SS2A', 'SS2B', 'SS2C', 'SS2D', 'SS2E',
+                'SS3A', 'SS3B', 'SS3C', 'SS3D', 'SS3E'
+            ];
+        }
+
+        function getDefaultSubjects() {
+            return [
+                'English Language', 'Mathematics', 'Physics', 'Chemistry',
+                'Biology', 'Economics', 'Government', 'Literature in English',
+                'Civic Education', 'Computer Studies', 'Agricultural Science',
+                'Islamic Religious Studies (IRS)', 'Christian Religious Studies (CRS)'
+            ];
+        }
+
+        // ================================================================
+        // AUTH
+        // ================================================================
+        let currentUser = null; // { role, id, name, data }
+
+        function hashPass(p) { return btoa(p + 'saltysalt'); }
+
+        function verifyPass(plain, hashed) { return hashPass(plain) === hashed; }
+
+        function initSampleData() {
+            if (!localStorage.getItem('students')) {
+                const students = [
+                    { id: 'GDSS/001', firstName: 'Ali', lastName: 'Musa', gender: 'Male', dob: '2005-01-15',
+                        phone: '08012345671', address: 'Birniwa', class: 'SS1A', password: hashPass('123456'),
+                        session: '2024/2025', status: 'Active' },
+                    { id: 'GDSS/002', firstName: 'Aisha', lastName: 'Ibrahim', gender: 'Female', dob: '2006-03-20',
+                        phone: '08012345672', address: 'Birniwa', class: 'SS2B', password: hashPass('123456'),
+                        session: '2024/2025', status: 'Active' },
+                    { id: 'GDSS/003', firstName: 'Sani', lastName: 'Umar', gender: 'Male', dob: '2004-11-10',
+                        phone: '08012345673', address: 'Birniwa', class: 'SS3C', password: hashPass('123456'),
+                        session: '2024/2025', status: 'Active' },
+                ];
+                setStudents(students);
+            }
+            if (!localStorage.getItem('staff')) {
+                const staff = [
+                    { id: 'STF001', firstName: 'Abdullahi', lastName: 'Musa', gender: 'Male', phone: '08012345681',
+                        email: 'abdullahi@school.com', subject: 'Mathematics', password: hashPass('123456'),
+                        status: 'Active' },
+                    { id: 'STF002', firstName: 'Amina', lastName: 'Ibrahim', gender: 'Female', phone: '08012345682',
+                        email: 'amina@school.com', subject: 'English Language', password: hashPass('123456'),
+                        status: 'Active' },
+                ];
+                setStaff(staff);
+            }
+            if (!localStorage.getItem('subjects')) {
+                setSubjects(getDefaultSubjects());
+            }
+            if (!localStorage.getItem('results')) {
+                const sampleResults = [];
+                const students = getStudents();
+                const subjects = getSubjects();
+                const terms = ['First', 'Second', 'Third'];
+                students.forEach((s, si) => {
+                    const term = terms[si % 3];
+                    const subj = subjects.slice(si * 2 % subjects.length, (si * 2 % subjects.length) + 3);
+                    subj.forEach((sub, idx) => {
+                        const ca1 = Math.floor(Math.random() * 9) + 1;
+                        const ca2 = Math.floor(Math.random() * 9) + 1;
+                        const exam = Math.floor(Math.random() * 60) + 20;
+                        const total = ca1 + ca2 + exam;
+                        const grade = getGrade(total);
+                        sampleResults.push({
+                            id: 'RES' + String(Date.now() + si + idx).slice(-6),
+                            studentId: s.id,
+                            admissionNumber: s.id,
+                            class: s.class,
+                            session: '2024/2025',
+                            term: term,
+                            subject: sub,
+                            ca1: ca1,
+                            ca2: ca2,
+                            exam: exam,
+                            total: total,
+                            grade: grade,
+                            remark: getRemark(grade)
+                        });
+                    });
+                });
+                setResults(sampleResults);
+            }
+            if (!localStorage.getItem('attendance')) {
+                const att = [];
+                const students = getStudents();
+                const dates = ['2024-01-10', '2024-01-11', '2024-01-12'];
+                students.forEach(s => {
+                    dates.forEach((d, i) => {
+                        att.push({
+                            id: 'ATT' + String(Date.now() + i).slice(-6),
+                            studentId: s.id,
+                            class: s.class,
+                            date: d,
+                            status: i % 2 === 0 ? 'Present' : 'Absent'
+                        });
+                    });
+                });
+                setAttendance(att);
+            }
+            if (!localStorage.getItem('settings')) {
+                setSettings(getSettings());
+            }
+        }
+
+        function getGrade(total) {
+            if (total >= 70) return 'A';
+            if (total >= 60) return 'B';
+            if (total >= 50) return 'C';
+            if (total >= 45) return 'D';
+            if (total >= 40) return 'E';
+            return 'F';
+        }
+
+        function getRemark(grade) {
+            const map = { 'A': 'Excellent', 'B': 'Very Good', 'C': 'Good', 'D': 'Pass', 'E': 'Weak Pass', 'F': 'Fail' };
+            return map[grade] || 'Fail';
+        }
+
+        // ================================================================
+        // LOGIN
+        // ================================================================
+        const loginRole = 'admin';
+
+        function initLogin() {
+            const tabs = document.querySelectorAll('#loginTabs button');
+            const fields = document.getElementById('loginFields');
+            const hint = document.getElementById('loginHint');
+            let role = 'admin';
+
+            function renderFields() {
+                if (role === 'admin') {
+                    fields.innerHTML = `
+                        <div class="form-group"><label>Username</label><input type="text" id="loginUser" value="admin" /></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="loginPass" value="admin123" /></div>
+                    `;
+                    hint.innerHTML =
+                        '<strong>Admin:</strong> admin / admin123 &nbsp;|&nbsp; <strong>Student:</strong> GDSS/001 / 123456 &nbsp;|&nbsp; <strong>Staff:</strong> STF001 / 123456';
+                } else if (role === 'student') {
+                    fields.innerHTML = `
+                        <div class="form-group"><label>Admission Number</label><input type="text" id="loginUser" placeholder="e.g. GDSS/001" /></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password" /></div>
+                    `;
+                    hint.innerHTML = 'Use admission number and password. <strong>Demo:</strong> GDSS/001 / 123456';
+                } else {
+                    fields.innerHTML = `
+                        <div class="form-group"><label>Staff ID</label><input type="text" id="loginUser" placeholder="e.g. STF001" /></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password" /></div>
+                    `;
+                    hint.innerHTML = 'Use staff ID and password. <strong>Demo:</strong> STF001 / 123456';
+                }
+            }
+
+            tabs.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabs.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    role = btn.dataset.role;
+                    renderFields();
+                    document.getElementById('loginError').textContent = '';
+                });
+            });
+
+            renderFields();
+
+            document.getElementById('loginForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const user = document.getElementById('loginUser').value.trim();
+                const pass = document.getElementById('loginPass').value.trim();
+                const error = document.getElementById('loginError');
+
+                if (role === 'admin') {
+                    if (user === 'admin' && pass === 'admin123') {
+                        currentUser = { role: 'admin', id: 'admin', name: 'Administrator' };
+                        enterApp();
+                        return;
+                    }
+                    error.textContent = 'Invalid admin credentials.';
+                } else if (role === 'student') {
+                    const students = getStudents();
+                    const found = students.find(s => s.id === user && verifyPass(pass, s.password));
+                    if (found) {
+                        currentUser = { role: 'student', id: found.id, name: found.firstName + ' ' + found.lastName,
+                            data: found };
+                        enterApp();
+                        return;
+                    }
+                    error.textContent = 'Invalid admission number or password.';
+                } else {
+                    const staff = getStaff();
+                    const found = staff.find(s => s.id === user && verifyPass(pass, s.password));
+                    if (found) {
+                        currentUser = { role: 'staff', id: found.id, name: found.firstName + ' ' + found.lastName,
+                            data: found };
+                        enterApp();
+                        return;
+                    }
+                    error.textContent = 'Invalid staff ID or password.';
+                }
+            });
+        }
+
+        function enterApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            document.getElementById('sidebarSchoolName').textContent = getSettings().schoolName || 'GDSS BIRNIWA';
+            updateSidebar();
+            updateUserInfo();
+            if (currentUser.role === 'admin') {
+                showPage('dashboard');
+                renderDashboard();
+            } else if (currentUser.role === 'student') {
+                showPage('s-dashboard');
+                renderStudentDashboard();
+            } else {
+                showPage('t-dashboard');
+                renderStaffDashboard();
+            }
+            applySettings();
+        }
+
+        function updateSidebar() {
+            const adminNav = document.getElementById('adminNav');
+            const studentNav = document.getElementById('studentNav');
+            const staffNav = document.getElementById('staffNav');
+            adminNav.style.display = 'none';
+            studentNav.style.display = 'none';
+            staffNav.style.display = 'none';
+            if (currentUser.role === 'admin') adminNav.style.display = 'block';
+            else if (currentUser.role === 'student') studentNav.style.display = 'block';
+            else staffNav.style.display = 'block';
+            // Close sidebar on mobile
+            closeSidebar();
+        }
+
+        function updateUserInfo() {
+            const avatar = document.getElementById('sidebarAvatar');
+            const name = document.getElementById('sidebarUserName');
+            const role = document.getElementById('sidebarUserRole');
+            if (currentUser) {
+                const initial = currentUser.name.charAt(0).toUpperCase();
+                avatar.textContent = initial;
+                name.textContent = currentUser.name;
+                if (currentUser.role === 'admin') role.textContent = 'Administrator';
+                else if (currentUser.role === 'student') role.textContent = 'Student';
+                else role.textContent = 'Staff';
+            }
+        }
+
+        function applySettings() {
+            const settings = getSettings();
+            document.getElementById('sidebarSchoolName').textContent = settings.schoolName || 'GDSS BIRNIWA';
+            const logo = settings.logo || '';
+            const img = document.getElementById('sidebarLogo');
+            if (logo) { img.src = logo;
+                img.style.display = 'inline'; } else { img.style.display = 'none'; }
+            document.getElementById('settingsLogoPreview').src = logo || '';
+            document.getElementById('setSchoolName').value = settings.schoolName || '';
+            document.getElementById('setMotto').value = settings.motto || '';
+            document.getElementById('setAddress').value = settings.address || '';
+            document.getElementById('setPhone').value = settings.phone || '';
+            document.getElementById('setEmail').value = settings.email || '';
+            document.getElementById('setSession').value = settings.session || '2024/2025';
+            document.getElementById('setTerm').value = settings.term || 'First';
+            document.getElementById('setLogo').value = logo;
+            // update broadsheet session
+            document.getElementById('broadsheetSession').value = settings.session || '2024/2025';
+            document.getElementById('reportSessionInput').value = settings.session || '2024/2025';
+        }
+
+        // ================================================================
+        // NAVIGATION
+        // ================================================================
+        function showPage(page) {
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(p => p.style.display = 'none');
+            const target = document.getElementById('page-' + page);
+            if (target) target.style.display = 'block';
+
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.nav-item[data-page="' + page + '"]').forEach(n => n.classList.add('active'));
+
+            // Title
+            const titles = {
+                dashboard: 'Dashboard',
+                students: 'Student Management',
+                staff: 'Staff Management',
+                subjects: 'Subject Management',
+                results: 'Result Management',
+                attendance: 'Attendance Management',
+                broadsheet: 'Broadsheet',
+                reportcard: 'Report Card',
+                settings: 'Settings',
+                's-dashboard': 'Student Dashboard',
+                's-profile': 'My Profile',
+                's-results': 'My Results',
+                's-attendance': 'My Attendance',
+                's-reportcard': 'My Report Card',
+                's-password': 'Change Password',
+                't-dashboard': 'Staff Dashboard',
+                't-students': 'My Students',
+                't-results': 'Enter Results',
+                't-attendance': 'Record Attendance',
+                't-password': 'Change Password'
+            };
+            document.getElementById('pageTitle').textContent = titles[page] || page;
+            document.getElementById('breadcrumb').innerHTML = 'Home / <span>' + (titles[page] || page) + '</span>';
+
+            // Render content
+            if (page === 'dashboard') renderDashboard();
+            else if (page === 'students') renderStudents();
+            else if (page === 'staff') renderStaff();
+            else if (page === 'subjects') renderSubjects();
+            else if (page === 'results') renderResults();
+            else if (page === 'attendance') renderAttendance();
+            else if (page === 'broadsheet') generateBroadsheet();
+            else if (page === 'reportcard') populateReportSelect();
+            else if (page === 's-dashboard') renderStudentDashboard();
+            else if (page === 's-profile') renderStudentProfile();
+            else if (page === 's-results') renderStudentResults();
+            else if (page === 's-attendance') renderStudentAttendance();
+            else if (page === 's-reportcard') renderStudentReportCard();
+            else if (page === 't-dashboard') renderStaffDashboard();
+            else if (page === 't-students') renderStaffStudents();
+            else if (page === 't-results') renderStaffResults();
+            else if (page === 't-attendance') renderStaffAttendance();
+
+            closeSidebar();
+        }
+
+        document.addEventListener('click', (e) => {
+            const item = e.target.closest('.nav-item');
+            if (item && item.dataset.page) {
+                e.preventDefault();
+                showPage(item.dataset.page);
+            }
+            if (item && item.id === 'logoutBtn') logout();
+            if (item && item.id === 'logoutBtnStudent') logout();
+            if (item && item.id === 'logoutBtnStaff') logout();
+        });
+
+        document.getElementById('hamburgerBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        });
+
+        document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                currentUser = null;
+                document.getElementById('app').style.display = 'none';
+                document.getElementById('loginPage').style.display = 'flex';
+                document.getElementById('loginError').textContent = '';
+                closeSidebar();
+            }
+        }
+
+        // ================================================================
+        // MODAL
+        // ================================================================
+        function openModal(title, html) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('modalOverlay').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('open');
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+
+        // ================================================================
+        // DASHBOARD (Admin)
+        // ================================================================
+        function renderDashboard() {
+            const students = getStudents();
+            const staff = getStaff();
+            const subjects = getSubjects();
+            const results = getResults();
+            const attendance = getAttendance();
+            const classes = getClasses();
+
+            document.getElementById('statStudents').textContent = students.length;
+            document.getElementById('statStaff').textContent = staff.length;
+            document.getElementById('statSubjects').textContent = subjects.length;
+            document.getElementById('statResults').textContent = results.length;
+            document.getElementById('statClasses').textContent = classes.length;
+            document.getElementById('statAttendance').textContent = attendance.length;
+
+            // Recent results
+            const recent = results.slice(-10).reverse();
+            let html = '<table><thead><tr><th>Student</th><th>Subject</th><th>Total</th><th>Grade</th><th>Term</th></tr></thead><tbody>';
+            if (recent.length === 0) {
+                html += '<tr><td colspan="5" class="text-muted text-center">No results found.</td></tr>';
+            } else {
+                recent.forEach(r => {
+                    const student = students.find(s => s.id === r.studentId);
+                    const name = student ? student.firstName + ' ' + student.lastName : r.admissionNumber;
+                    html += `<tr><td>${name}</td><td>${r.subject}</td><td>${r.total}</td><td class="grade-${r.grade}">${r.grade}</td><td>${r.term}</td></tr>`;
+                });
+            }
+            html += '</tbody></table>';
+            document.getElementById('recentResultsTable').innerHTML = html;
+        }
+
+        // ================================================================
+        // STUDENTS (Admin)
+        // ================================================================
+        function renderStudents() {
+            const students = getStudents();
+            const search = document.getElementById('studentSearchInput').value.toLowerCase();
+            const cls = document.getElementById('studentClassFilter').value;
+            let filtered = students.filter(s => {
+                const matchSearch = (s.firstName + ' ' + s.lastName + ' ' + s.id).toLowerCase().includes(search);
+                const matchClass = cls === '' || s.class === cls;
+                return matchSearch && matchClass;
+            });
+
+            let html = '<table><thead><tr><th>Admission</th><th>Name</th><th>Class</th><th>Gender</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+            if (filtered.length === 0) {
+                html += '<tr><td colspan="6" class="text-muted text-center">No students found.</td></tr>';
+            } else {
+                filtered.forEach(s => {
+                    html += `<tr>
+                        <td><strong>${s.id}</strong></td>
+                        <td>${s.firstName} ${s.lastName}</td>
+                        <td>${s.class}</td>
+                        <td>${s.gender}</td>
+                        <td><span class="badge ${s.status==='Active'?'badge-success':'badge-danger'}">${s.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewStudent('${s.id}')">👁️</button>
+                            <button class="btn btn-sm btn-primary" onclick="editStudent('${s.id}')">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteStudent('${s.id}')">🗑️</button>
+                            <button class="btn btn-sm btn-warning" onclick="resetStudentPass('${s.id}')">🔑</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table>';
+            document.getElementById('studentsTable').innerHTML = html;
+        }
+
+        function openStudentModal(data) {
+            const isEdit = !!data;
+            const title = isEdit ? 'Edit Student' : 'Add Student';
+            const classes = getClasses().map(c => `<option value="${c}" ${data && data.class===c?'selected':''}>${c}</option>`).join('');
+            const genders = ['Male', 'Female'].map(g =>
+                `<option value="${g}" ${data && data.gender===g?'selected':''}>${g}</option>`).join('');
+            const statuses = ['Active', 'Inactive'].map(st =>
+                `<option value="${st}" ${data && data.status===st?'selected':''}>${st}</option>`).join('');
+            const html = `
+                <form id="studentForm" onsubmit="saveStudent(event)">
+                    <input type="hidden" id="sfId" value="${data ? data.id : ''}" />
+                    <div class="form-row">
+                        <div class="form-group"><label>Admission Number</label><input type="text" id="sfAdmission" value="${data ? data.id : 'GDSS/'+String(Date.now()).slice(-4)}" ${isEdit?'readonly':''} required /></div>
+                        <div class="form-group"><label>First Name</label><input type="text" id="sfFirstName" value="${data ? data.firstName : ''}" required /></div>
+                        <div class="form-group"><label>Last Name</label><input type="text" id="sfLastName" value="${data ? data.lastName : ''}" required /></div>
+                        <div class="form-group"><label>Gender</label><select id="sfGender">${genders}</select></div>
+                        <div class="form-group"><label>Date of Birth</label><input type="date" id="sfDob" value="${data ? data.dob : ''}" /></div>
+                        <div class="form-group"><label>Phone</label><input type="text" id="sfPhone" value="${data ? data.phone : ''}" /></div>
+                        <div class="form-group full"><label>Address</label><input type="text" id="sfAddress" value="${data ? data.address : ''}" /></div>
+                        <div class="form-group"><label>Class</label><select id="sfClass">${classes}</select></div>
+                        <div class="form-group"><label>Status</label><select id="sfStatus">${statuses}</select></div>
+                        <div class="form-group"><label>Password</label><input type="text" id="sfPassword" value="${data ? '••••••' : '123456'}" placeholder="Leave blank to keep current" /></div>
+                        <div class="form-group"><label>Session</label><input type="text" id="sfSession" value="${data ? data.session : getSettings().session}" /></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Add'} Student</button>
+                    </div>
+                </form>
+            `;
+            openModal(title, html);
+        }
+
+        function saveStudent(e) {
+            e.preventDefault();
+            const id = document.getElementById('sfId').value;
+            const admission = document.getElementById('sfAdmission').value.trim();
+            const firstName = document.getElementById('sfFirstName').value.trim();
+            const lastName = document.getElementById('sfLastName').value.trim();
+            const gender = document.getElementById('sfGender').value;
+            const dob = document.getElementById('sfDob').value;
+            const phone = document.getElementById('sfPhone').value.trim();
+            const address = document.getElementById('sfAddress').value.trim();
+            const cls = document.getElementById('sfClass').value;
+            const status = document.getElementById('sfStatus').value;
+            const password = document.getElementById('sfPassword').value.trim();
+            const session = document.getElementById('sfSession').value.trim() || getSettings().session;
+
+            const students = getStudents();
+            if (!id) {
+                // Add
+                if (students.some(s => s.id === admission)) {
+                    alert('Admission number already exists.');
+                    return;
+                }
+                const newStudent = {
+                    id: admission,
+                    firstName,
+                    lastName,
+                    gender,
+                    dob,
+                    phone,
+                    address,
+                    class: cls,
+                    password: password ? hashPass(password) : hashPass('123456'),
+                    session,
+                    status
+                };
+                students.push(newStudent);
+                setStudents(students);
+            } else {
+                // Edit
+                const idx = students.findIndex(s => s.id === id);
+                if (idx === -1) { alert('Student not found.'); return; }
+                const s = students[idx];
+                s.firstName = firstName;
+                s.lastName = lastName;
+                s.gender = gender;
+                s.dob = dob;
+                s.phone = phone;
+                s.address = address;
+                s.class = cls;
+                s.session = session;
+                s.status = status;
+                if (password && password !== '••••••') s.password = hashPass(password);
+                setStudents(students);
+            }
+            closeModal();
+            renderStudents();
+            renderDashboard();
+        }
+
+        function editStudent(id) {
+            const students = getStudents();
+            const s = students.find(s => s.id === id);
+            if (!s) return;
+            openStudentModal(s);
+        }
+
+        function deleteStudent(id) {
+            if (!confirm('Delete this student?')) return;
+            let students = getStudents();
+            students = students.filter(s => s.id !== id);
+            setStudents(students);
+            renderStudents();
+            renderDashboard();
+        }
+
+        function viewStudent(id) {
+            const students = getStudents();
+            const s = students.find(s => s.id === id);
+            if (!s) return;
+            const html = `
+                <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+                    <div class="profile-avatar">${s.firstName.charAt(0)}${s.lastName.charAt(0)}</div>
+                    <div style="flex:1;">
+                        <div class="profile-info-grid">
+                            <div class="info-item"><label>Admission</label><p>${s.id}</p></div>
+                            <div class="info-item"><label>Name</label><p>${s.firstName} ${s.lastName}</p></div>
+                            <div class="info-item"><label>Gender</label><p>${s.gender}</p></div>
+                            <div class="info-item"><label>Date of Birth</label><p>${s.dob || '—'}</p></div>
+                            <div class="info-item"><label>Phone</label><p>${s.phone || '—'}</p></div>
+                            <div class="info-item"><label>Address</label><p>${s.address || '—'}</p></div>
+                            <div class="info-item"><label>Class</label><p>${s.class}</p></div>
+                            <div class="info-item"><label>Status</label><p><span class="badge ${s.status==='Active'?'badge-success':'badge-danger'}">${s.status}</span></p></div>
+                            <div class="info-item"><label>Session</label><p>${s.session}</p></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            openModal('Student Profile — ' + s.firstName + ' ' + s.lastName, html);
+        }
+
+        function resetStudentPass(id) {
+            if (!confirm('Reset password to 123456?')) return;
+            const students = getStudents();
+            const s = students.find(s => s.id === id);
+            if (!s) return;
+            s.password = hashPass('123456');
+            setStudents(students);
+            alert('Password reset to 123456');
+            renderStudents();
+        }
+
+        // ================================================================
+        // STAFF (Admin)
+        // ================================================================
+        function renderStaff() {
+            const staff = getStaff();
+            const search = document.getElementById('staffSearchInput').value.toLowerCase();
+            let filtered = staff.filter(s => (s.firstName + ' ' + s.lastName + ' ' + s.id).toLowerCase().includes(search));
+
+            let html =
+                '<table><thead><tr><th>Staff ID</th><th>Name</th><th>Subject</th><th>Phone</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+            if (filtered.length === 0) {
+                html += '<tr><td colspan="6" class="text-muted text-center">No staff found.</td></tr>';
+            } else {
+                filtered.forEach(s => {
+                    html += `<tr>
+                        <td><strong>${s.id}</strong></td>
+                        <td>${s.firstName} ${s.lastName}</td>
+                        <td>${s.subject || '—'}</td>
+                        <td>${s.phone || '—'}</td>
+                        <td><span class="badge ${s.status==='Active'?'badge-success':'badge-danger'}">${s.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="editStaff('${s.id}')">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteStaff('${s.id}')">🗑️</button>
+                            <button class="btn btn-sm btn-warning" onclick="resetStaffPass('${s.id}')">🔑</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table>';
+            document.getElementById('staffTable').innerHTML = html;
+        }
+
+        function openStaffModal(data) {
+            const isEdit = !!data;
+            const title = isEdit ? 'Edit Staff' : 'Add Staff';
+            const subjects = getSubjects().map(s =>
+                `<option value="${s}" ${data && data.subject===s?'selected':''}>${s}</option>`).join('');
+            const genders = ['Male', 'Female'].map(g =>
+                `<option value="${g}" ${data && data.gender===g?'selected':''}>${g}</option>`).join('');
+            const statuses = ['Active', 'Inactive'].map(st =>
+                `<option value="${st}" ${data && data.status===st?'selected':''}>${st}</option>`).join('');
+            const html = `
+                <form id="staffForm" onsubmit="saveStaff(event)">
+                    <input type="hidden" id="stfId" value="${data ? data.id : ''}" />
+                    <div class="form-row">
+                        <div class="form-group"><label>Staff ID</label><input type="text" id="stfIdInput" value="${data ? data.id : 'STF'+String(Date.now()).slice(-4)}" ${isEdit?'readonly':''} required /></div>
+                        <div class="form-group"><label>First Name</label><input type="text" id="stfFirstName" value="${data ? data.firstName : ''}" required /></div>
+                        <div class="form-group"><label>Last Name</label><input type="text" id="stfLastName" value="${data ? data.lastName : ''}" required /></div>
+                        <div class="form-group"><label>Gender</label><select id="stfGender">${genders}</select></div>
+                        <div class="form-group"><label>Phone</label><input type="text" id="stfPhone" value="${data ? data.phone : ''}" /></div>
+                        <div class="form-group"><label>Email</label><input type="email" id="stfEmail" value="${data ? data.email : ''}" /></div>
+                        <div class="form-group"><label>Subject</label><select id="stfSubject">${subjects}</select></div>
+                        <div class="form-group"><label>Status</label><select id="stfStatus">${statuses}</select></div>
+                        <div class="form-group"><label>Password</label><input type="text" id="stfPassword" value="${data ? '••••••' : '123456'}" placeholder="Leave blank to keep current" /></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Add'} Staff</button>
+                    </div>
+                </form>
+            `;
+            openModal(title, html);
+        }
+
+        function saveStaff(e) {
+            e.preventDefault();
+            const id = document.getElementById('stfId').value;
+            const idInput = document.getElementById('stfIdInput').value.trim();
+            const firstName = document.getElementById('stfFirstName').value.trim();
+            const lastName = document.getElementById('stfLastName').value.trim();
+            const gender = document.getElementById('stfGender').value;
+            const phone = document.getElementById('stfPhone').value.trim();
+            const email = document.getElementById('stfEmail').value.trim();
+            const subject = document.getElementById('stfSubject').value;
+            const status = document.getElementById('stfStatus').value;
+            const password = document.getElementById('stfPassword').value.trim();
+
+            const staff = getStaff();
+            if (!id) {
+                if (staff.some(s => s.id === idInput)) { alert('Staff ID already exists.'); return; }
+                const newStaff = {
+                    id: idInput,
+                    firstName,
+                    lastName,
+                    gender,
+                    phone,
+                    email,
+                    subject,
+                    password: password ? hashPass(password) : hashPass('123456'),
+                    status
+                };
+                staff.push(newStaff);
+                setStaff(staff);
+            } else {
+                const idx = staff.findIndex(s => s.id === id);
+                if (idx === -1) { alert('Staff not found.'); return; }
+                const s = staff[idx];
+                s.firstName = firstName;
+                s.lastName = lastName;
+                s.gender = gender;
+                s.phone = phone;
+                s.email = email;
+                s.subject = subject;
+                s.status = status;
+                if (password && password !== '••••••') s.password = hashPass(password);
+                setStaff(staff);
+            }
+            closeModal();
+            renderStaff();
+            renderDashboard();
+        }
+
+        function editStaff(id) {
+            const staff = getStaff();
+            const s = staff.find(s => s.id === id);
+            if (!s) return;
+            openStaffModal(s);
+        }
+
+        function deleteStaff(id) {
+            if (!confirm('Delete this staff?')) return;
+            let staff = getStaff();
+            staff = staff.filter(s => s.id !== id);
+            setStaff(staff);
+            renderStaff();
+            renderDashboard();
+        }
+
+        function resetStaffPass(id) {
+            if (!confirm('Reset password to 123456?')) return;
+            const staff = getStaff();
+            const s = staff.find(s => s.id === id);
+            if (!s) return;
+            s.password = hashPass('123456');
+            setStaff(staff);
+            alert('Password reset to 123456');
+            renderStaff();
+        }
+
+        // ================================================================
+        // SUBJECTS (Admin)
+        // ================================================================
+        function renderSubjects() {
+            const subjects = getSubjects();
+            let html =
+                '<table><thead><tr><th>#</th><th>Subject Name</th><th>Actions</th></tr></thead><tbody>';
+            if (subjects.length === 0) {
+                html += '<tr><td colspan="3" class="text-muted text-center">No subjects added.</td></tr>';
+            } else {
+                subjects.forEach((s, i) => {
+                    html += `<tr>
+                        <td>${i+1}</td>
+                        <td>${s}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="editSubject(${i})">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteSubject(${i})">🗑️</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table>';
+            document.getElementById('subjectsTable').innerHTML = html;
+        }
+
+        function openSubjectModal(data, idx) {
+            const isEdit = idx !== undefined;
+            const title = isEdit ? 'Edit Subject' : 'Add Subject';
+            const html = `
+                <form id="subjectForm" onsubmit="saveSubject(event, ${idx !== undefined ? idx : -1})">
+                    <div class="form-group"><label>Subject Name</label><input type="text" id="subjName" value="${isEdit ? data : ''}" required /></div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Add'} Subject</button>
+                    </div>
+                </form>
+            `;
+            openModal(title, html);
+        }
+
+        function saveSubject(e, idx) {
+            e.preventDefault();
+            const name = document.getElementById('subjName').value.trim();
+            if (!name) return;
+            let subjects = getSubjects();
+            if (idx === -1) {
+                if (subjects.includes(name)) { alert('Subject already exists.'); return; }
+                subjects.push(name);
+            } else {
+                if (subjects[idx] !== name && subjects.includes(name)) { alert('Subject already exists.'); return; }
+                subjects[idx] = name;
+            }
+            setSubjects(subjects);
+            closeModal();
+            renderSubjects();
+            renderDashboard();
+        }
+
+        function editSubject(idx) {
+            const subjects = getSubjects();
+            openSubjectModal(subjects[idx], idx);
+        }
+
+        function deleteSubject(idx) {
+            if (!confirm('Delete this subject?')) return;
+            let subjects = getSubjects();
+            subjects.splice(idx, 1);
+            setSubjects(subjects);
+            renderSubjects();
+            renderDashboard();
+        }
+
+        // ================================================================
+        // RESULTS (Admin)
+        // ================================================================
+        function renderResults() {
+            const results = getResults();
+            const students = getStudents();
+            const search = document.getElementById('resultSearchInput').value.toLowerCase();
+            const cls = document.getElementById('resultClassFilter').value;
+            const term = document.getElementById('resultTermFilter').value;
+
+            let filtered = results.filter(r => {
+                const student = students.find(s => s.id === r.studentId);
+                const name = student ? (student.firstName + ' ' + student.lastName) : r.admissionNumber;
+                const matchSearch = (name + ' ' + r.admissionNumber).toLowerCase().includes(search);
+                const matchClass = cls === '' || r.class === cls;
+                const matchTerm = term === '' || r.term === term;
+                return matchSearch && matchClass && matchTerm;
+            });
+
+            let html =
+                '<table><thead><tr><th>Student</th><th>Admission</th><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th><th>Term</th><th>Actions</th></tr></thead><tbody>';
+            if (filtered.length === 0) {
+                html += '<tr><td colspan="10" class="text-muted text-center">No results found.</td></tr>';
+            } else {
+                filtered.forEach(r => {
+                    const student = students.find(s => s.id === r.studentId);
+                    const name = student ? student.firstName + ' ' + student.lastName : r.admissionNumber;
+                    html += `<tr>
+                        <td>${name}</td>
+                        <td>${r.admissionNumber}</td>
+                        <td>${r.subject}</td>
+                        <td>${r.ca1}</td>
+                        <td>${r.ca2}</td>
+                        <td>${r.exam}</td>
+                        <td><strong>${r.total}</strong></td>
+                        <td class="grade-${r.grade}">${r.grade}</td>
+                        <td>${r.term}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="editResult('${r.id}')">✏️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteResult('${r.id}')">🗑️</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table>';
+            document.getElementById('resultsTable').innerHTML = html;
+        }
+
+        function openResultModal(data) {
+            const isEdit = !!data;
+            const title = isEdit ? 'Edit Result' : 'Enter Result';
+            const students = getStudents();
+            const subjects = getSubjects();
+            const terms = ['First', 'Second', 'Third'];
+            const studentOpts = students.map(s =>
+                `<option value="${s.id}" ${data && data.studentId===s.id?'selected':''}>${s.firstName} ${s.lastName} (${s.id})</option>`
+                ).join('');
+            const subjectOpts = subjects.map(s =>
+                `<option value="${s}" ${data && data.subject===s?'selected':''}>${s}</option>`).join('');
+            const termOpts = terms.map(t =>
+                `<option value="${t}" ${data && data.term===t?'selected':''}>${t}</option>`).join('');
+            const html = `
+                <form id="resultForm" onsubmit="saveResult(event)">
+                    <input type="hidden" id="rfId" value="${data ? data.id : ''}" />
+                    <div class="form-row">
+                        <div class="form-group"><label>Student</label><select id="rfStudent">${studentOpts}</select></div>
+                        <div class="form-group"><label>Subject</label><select id="rfSubject">${subjectOpts}</select></div>
+                        <div class="form-group"><label>Class</label><input type="text" id="rfClass" value="${data ? data.class : ''}" required /></div>
+                        <div class="form-group"><label>Session</label><input type="text" id="rfSession" value="${data ? data.session : getSettings().session}" /></div>
+                        <div class="form-group"><label>Term</label><select id="rfTerm">${termOpts}</select></div>
+                        <div class="form-group"><label>CA1 (10)</label><input type="number" id="rfCa1" value="${data ? data.ca1 : ''}" min="0" max="10" required /></div>
+                        <div class="form-group"><label>CA2 (10)</label><input type="number" id="rfCa2" value="${data ? data.ca2 : ''}" min="0" max="10" required /></div>
+                        <div class="form-group"><label>Examination (80)</label><input type="number" id="rfExam" value="${data ? data.exam : ''}" min="0" max="80" required /></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Add'} Result</button>
+                    </div>
+                </form>
+            `;
+            openModal(title, html);
+        }
+
+        function saveResult(e) {
+            e.preventDefault();
+            const id = document.getElementById('rfId').value;
+            const studentId = document.getElementById('rfStudent').value;
+            const subject = document.getElementById('rfSubject').value;
+            const cls = document.getElementById('rfClass').value.trim();
+            const session = document.getElementById('rfSession').value.trim();
+            const term = document.getElementById('rfTerm').value;
+            const ca1 = parseFloat(document.getElementById('rfCa1').value) || 0;
+            const ca2 = parseFloat(document.getElementById('rfCa2').value) || 0;
+            const exam = parseFloat(document.getElementById('rfExam').value) || 0;
+            const total = ca1 + ca2 + exam;
+            const grade = getGrade(total);
+            const remark = getRemark(grade);
+
+            const students = getStudents();
+            const student = students.find(s => s.id === studentId);
+            const admissionNumber = student ? student.id : studentId;
+
+            const results = getResults();
+            if (!id) {
+                // Check duplicate
+                const dup = results.some(r => r.studentId === studentId && r.subject === subject && r.term === term && r
+                    .session === session);
+                if (dup) { alert('Result already exists for this student, subject, term, and session.'); return; }
+                const newResult = {
+                    id: 'RES' + String(Date.now()).slice(-6),
+                    studentId,
+                    admissionNumber,
+                    class: cls || (student ? student.class : ''),
+                    session,
+                    term,
+                    subject,
+                    ca1,
+                    ca2,
+                    exam,
+                    total,
+                    grade,
+                    remark
+                };
+                results.push(newResult);
+                setResults(results);
+            } else {
+                const idx = results.findIndex(r => r.id === id);
+                if (idx === -1) { alert('Result not found.'); return; }
+                const r = results[idx];
+                r.studentId = studentId;
+                r.admissionNumber = admissionNumber;
+                r.class = cls || (student ? student.class : '');
+                r.session = session;
+                r.term = term;
+                r.subject = subject;
+                r.ca1 = ca1;
+                r.ca2 = ca2;
+                r.exam = exam;
+                r.total = total;
+                r.grade = grade;
+                r.remark = remark;
+                setResults(results);
+            }
+            closeModal();
+            renderResults();
+            renderDashboard();
+        }
+
+        function editResult(id) {
+            const results = getResults();
+            const r = results.find(r => r.id === id);
+            if (!r) return;
+            openResultModal(r);
+        }
+
+        function deleteResult(id) {
+            if (!confirm('Delete this result?')) return;
+            let results = getResults();
+            results = results.filter(r => r.id !== id);
+            setResults(results);
+            renderResults();
+            renderDashboard();
+        }
+
+        // ================================================================
+        // ATTENDANCE (Admin)
+        // ================================================================
+        function renderAttendance() {
+            const attendance = getAttendance();
+            const students = getStudents();
+            const search = document.getElementById('attendanceSearchInput').value.toLowerCase();
+            const cls = document.getElementById('attendanceClassFilter').value;
+
+            let filtered = attendance.filter(a => {
+                const student = students.find(s => s.id === a.studentId);
+                const name = student ? student.firstName + ' ' + student.lastName : a.studentId;
+                const matchSearch = (name + ' ' + a.studentId).toLowerCase().includes(search);
+                const matchClass = cls === '' || a.class === cls;
+                return matchSearch && matchClass;
+            });
+
+            let html =
+                '<table><thead><tr><th>Student</th><th>Class</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+            if (filtered.length === 0) {
+                html += '<tr><td colspan="5" class="text-muted text-center">No attendance records found.</td></tr>';
+            } else {
+                filtered.forEach(a => {
+                    const student = students.find(s => s.id === a.studentId);
+                    const name = student ? student.firstName + ' ' + student.lastName : a.studentId;
+                    html += `<tr>
+                        <td>${name}</td>
+                        <td>${a.class}</td>
+                        <td>${a.date}</td>
+                        <td><span class="badge ${a.status==='Present'?'badge-success':'badge-danger'}">${a.status}</span></td>
+                        <td><button class="btn btn-sm btn-danger" onclick="deleteAttendance('${a.id}')">🗑️</button></td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table>';
+            document.getElementById('attendanceTable').innerHTML = html;
+        }
+
+        function openAttendanceModal() {
+            const students = getStudents();
+            const classes = getClasses();
+            const studentOpts = students.map(s =>
+                `<option value="${s.id}">${s.firstName} ${s.lastName} (${s.id})</option>`).join('');
+            const classOpts = classes.map(c =>
+                `<option value="${c}">${c}</option>`).join('');
+            const html = `
+                <form id="attendanceForm" onsubmit="saveAttendance(event)">
+                    <div class="form-row">
+                        <div class="form-group"><label>Student</label><select id="afStudent">${studentOpts}</select></div>
+                        <div class="form-group"><label>Class</label><select id="afClass">${classOpts}</select></div>
+                        <div class="form-group"><label>Date</label><input type="date" id="afDate" value="${new Date().toISOString().slice(0,10)}" required /></div>
+                        <div class="form-group"><label>Status</label>
+                            <select id="afStatus"><option value="Present">Present</option><option value="Absent">Absent</option></select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Record Attendance</button>
+                    </div>
+                </form>
+            `;
+            openModal('Record Attendance', html);
+        }
+
+        function saveAttendance(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('afStudent').value;
+            const cls = document.getElementById('afClass').value;
+            const date = document.getElementById('afDate').value;
+            const status = document.getElementById('afStatus').value;
+
+            const attendance = getAttendance();
+            // Check duplicate
+            const dup = attendance.some(a => a.studentId === studentId && a.date === date);
+            if (dup) { alert('Attendance already recorded for this student on this date.'); return; }
+
+            attendance.push({
+                id: 'ATT' + String(Date.now()).slice(-6),
+                studentId,
+                class: cls,
+                date,
+                status
+            });
+            setAttendance(attendance);
+            closeModal();
+            renderAttendance();
+            renderDashboard();
+        }
+
+        function deleteAttendance(id) {
+            if (!confirm('Delete this attendance record?')) return;
+            let attendance = getAttendance();
+            attendance = attendance.filter(a => a.id !== id);
+            setAttendance(attendance);
+            renderAttendance();
+            renderDashboard();
+        }
+
+        // ================================================================
+        // BROADSHEET
+        // ================================================================
+        function generateBroadsheet() {
+            const cls = document.getElementById('broadsheetClass').value;
+            const term = document.getElementById('broadsheetTerm').value;
+            const session = document.getElementById('broadsheetSession').value.trim() || getSettings().session;
+
+            const students = getStudents().filter(s => s.class === cls);
+            const allResults = getResults().filter(r => r.class === cls && r.term === term && r.session === session);
+            const subjects = getSubjects();
+
+            if (students.length === 0) {
+                document.getElementById('broadsheetContainer').innerHTML =
+                    `<p class="text-muted">No students found in ${cls}.</p>`;
+                return;
+            }
+
+            // Build per-student result map
+            const studentData = students.map(st => {
+                const results = allResults.filter(r => r.studentId === st.id);
+                const total = results.reduce((sum, r) => sum + r.total, 0);
+                const avg = results.length > 0 ? (total / results.length) : 0;
+                return {
+                    student: st,
+                    results,
+                    total,
+                    avg,
+                    subjectMap: results.reduce((map, r) => { map[r.subject] = r; return map; }, {})
+                };
+            });
+
+            // Sort by avg descending
+            studentData.sort((a, b) => b.avg - a.avg);
+
+            // Assign positions
+            let pos = 1;
+            let prevAvg = -1;
+            let posCounter = 0;
+            studentData.forEach((d, i) => {
+                posCounter++;
+                if (d.avg !== prevAvg) {
+                    pos = posCounter;
+                }
+                d.position = pos;
+                prevAvg = d.avg;
+            });
+
+            const settings = getSettings();
+            let html = `
+                <div class="broadsheet-title">
+                    <h2>${settings.schoolName}</h2>
+                    <p>${settings.motto}</p>
+                    <p><strong>Broadsheet — ${cls} | ${term} Term | ${session}</strong></p>
+                </div>
+                <div class="table-wrap">
+                <table>
+                    <thead><tr><th>#</th><th>Admission</th><th>Name</th>`;
+
+            // Subject columns
+            const allSubjects = [...new Set(allResults.map(r => r.subject))];
+            allSubjects.forEach(s => {
+                html += `<th>${s}</th>`;
+            });
+            html += `<th>Total</th><th>Avg</th><th>Grade</th><th>Pos</th></tr></thead><tbody>`;
+
+            studentData.forEach((d, i) => {
+                const grade = getGrade(d.avg);
+                html += `<tr>
+                    <td>${i+1}</td>
+                    <td>${d.student.id}</td>
+                    <td>${d.student.firstName} ${d.student.lastName}</td>`;
+                allSubjects.forEach(sub => {
+                    const r = d.subjectMap[sub];
+                    html += `<td>${r ? r.total : '—'}</td>`;
+                });
+                html += `<td><strong>${d.total}</strong></td>
+                    <td>${d.avg.toFixed(1)}</td>
+                    <td class="grade-${grade}">${grade}</td>
+                    <td><strong>${d.position}${getOrdinal(d.position)}</strong></td>
+                </tr>`;
+            });
+
+            html += '</tbody></table></div>';
+            document.getElementById('broadsheetContainer').innerHTML = html;
+        }
+
+        function getOrdinal(n) {
+            if (n === 1) return 'st';
+            if (n === 2) return 'nd';
+            if (n === 3) return 'rd';
+            return 'th';
+        }
+
+        function printBroadsheet() {
+            const content = document.getElementById('broadsheetContainer').innerHTML;
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Broadsheet</title>
+                <style>
+                    body { font-family: 'Segoe UI', sans-serif; padding: 40px; }
+                    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+                    th { background: #1a4d2e; color: #fff; padding: 8px 10px; text-align: left; }
+                    td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; }
+                    .grade-A { color: #065f46; font-weight:700; }
+                    .grade-B { color: #1e40af; font-weight:700; }
+                    .grade-C { color: #92400e; font-weight:700; }
+                    .grade-D { color: #78350f; font-weight:700; }
+                    .grade-E { color: #b45309; font-weight:700; }
+                    .grade-F { color: #b91c1c; font-weight:700; }
+                    .broadsheet-title { text-align: center; margin-bottom:20px; }
+                    .broadsheet-title h2 { color: #1a4d2e; }
+                </style>
+                </head><body>
+                ${content}
+                <p style="text-align:center;margin-top:30px;color:#64748b;font-size:0.8rem;">Generated by GDSS BIRNIWA SRMS</p>
+                <script>
+                    window.onload = function() { window.print(); }
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        // ================================================================
+        // REPORT CARD (Admin)
+        // ================================================================
+        function populateReportSelect() {
+            const students = getStudents();
+            const sel = document.getElementById('reportStudentSelect');
+            sel.innerHTML = students.map(s =>
+                `<option value="${s.id}">${s.firstName} ${s.lastName} (${s.id})</option>`
+            ).join('');
+            if (students.length > 0) generateReportCard();
+        }
+
+        function generateReportCard() {
+            const studentId = document.getElementById('reportStudentSelect').value;
+            const term = document.getElementById('reportTermSelect').value;
+            const session = document.getElementById('reportSessionInput').value.trim() || getSettings().session;
+
+            if (!studentId) {
+                document.getElementById('reportCardContainer').innerHTML = '<p class="text-muted">Select a student.</p>';
+                return;
+            }
+
+            const students = getStudents();
+            const student = students.find(s => s.id === studentId);
+            if (!student) {
+                document.getElementById('reportCardContainer').innerHTML = '<p class="text-muted">Student not found.</p>';
+                return;
+            }
+
+            const results = getResults().filter(r => r.studentId === studentId && r.term === term && r.session === session);
+            const attendance = getAttendance().filter(a => a.studentId === studentId);
+            const totalDays = attendance.length;
+            const daysPresent = attendance.filter(a => a.status === 'Present').length;
+            const attPercent = totalDays > 0 ? Math.round((daysPresent / totalDays) * 100) : 0;
+
+            const settings = getSettings();
+            const totalScore = results.reduce((sum, r) => sum + r.total, 0);
+            const avg = results.length > 0 ? (totalScore / results.length) : 0;
+            const grade = getGrade(avg);
+
+            // Position
+            const classStudents = students.filter(s => s.class === student.class);
+            const allClassResults = getResults().filter(r => r.class === student.class && r.term === term && r.session ===
+            session);
+            const studentAvgs = classStudents.map(st => {
+                const res = allClassResults.filter(r => r.studentId === st.id);
+                const t = res.reduce((s, r) => s + r.total, 0);
+                return { id: st.id, avg: res.length > 0 ? t / res.length : 0 };
+            });
+            const sorted = studentAvgs.sort((a, b) => b.avg - a.avg);
+            let pos = 1;
+            let prev = -1;
+            let counter = 0;
+            sorted.forEach((d, i) => {
+                counter++;
+                if (d.avg !== prev) pos = counter;
+                if (d.id === studentId) { d.position = pos;
+                    prev = d.avg; } else { prev = d.avg; }
+            });
+            const position = sorted.find(d => d.id === studentId)?.position || '—';
+
+            const logoHtml = settings.logo ?
+                `<img src="${settings.logo}" alt="Logo" style="max-height:70px;border-radius:8px;" />` :
+                '';
+
+            let html = `
+                <div class="report-card-print" id="reportCardPrintArea">
+                    <div style="text-align:center;padding:10px 0 16px;border-bottom:3px double var(--primary);">
+                        ${logoHtml}
+                        <h1 style="color:var(--primary);font-size:1.6rem;margin:4px 0;">${settings.schoolName}</h1>
+                        <p style="font-size:0.9rem;color:var(--text-light);">${settings.motto}</p>
+                        <p style="font-size:0.85rem;color:var(--text-light);">${settings.address}</p>
+                        <p style="font-size:0.85rem;color:var(--text-light);">Phone: ${settings.phone} | Email: ${settings.email}</p>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;padding:16px 0;border-bottom:1px solid var(--border);">
+                        <div><strong>Student:</strong> ${student.firstName} ${student.lastName}</div>
+                        <div><strong>Admission:</strong> ${student.id}</div>
+                        <div><strong>Class:</strong> ${student.class}</div>
+                        <div><strong>Session:</strong> ${session}</div>
+                        <div><strong>Term:</strong> ${term}</div>
+                        <div><strong>Gender:</strong> ${student.gender}</div>
+                    </div>
+                    <div class="table-wrap" style="margin:16px 0;">
+                        <table>
+                            <thead><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th><th>Remark</th></tr></thead>
+                            <tbody>`;
+
+            if (results.length === 0) {
+                html += '<tr><td colspan="7" class="text-muted text-center">No results found for this term.</td></tr>';
+            } else {
+                results.forEach(r => {
+                    html += `<tr>
+                        <td>${r.subject}</td>
+                        <td>${r.ca1}</td>
+                        <td>${r.ca2}</td>
+                        <td>${r.exam}</td>
+                        <td><strong>${r.total}</strong></td>
+                        <td class="grade-${r.grade}">${r.grade}</td>
+                        <td>${r.remark}</td>
+                    </tr>`;
+                });
+            }
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--border);">
+                        <div><strong>Total:</strong> ${totalScore}</div>
+                        <div><strong>Average:</strong> ${avg.toFixed(1)}%</div>
+                        <div><strong>Grade:</strong> <span class="grade-${grade}">${grade}</span></div>
+                        <div><strong>Position:</strong> ${position}${getOrdinal(position)}</div>
+                        <div><strong>Attendance:</strong> ${daysPresent}/${totalDays} (${attPercent}%)</div>
+                        <div><strong>Remark:</strong> ${getRemark(grade)}</div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;padding-top:20px;border-top:2px solid var(--border);margin-top:8px;">
+                        <div style="text-align:center;">
+                            <p>__________________________</p>
+                            <p style="font-size:0.85rem;color:var(--text-light);">Class Teacher's Comment</p>
+                            <p style="font-size:0.9rem;margin-top:6px;">&nbsp;</p>
+                            <p style="font-size:0.8rem;color:var(--text-light);">Signature: _______________</p>
+                        </div>
+                        <div style="text-align:center;">
+                            <p>__________________________</p>
+                            <p style="font-size:0.85rem;color:var(--text-light);">Principal's Comment</p>
+                            <p style="font-size:0.9rem;margin-top:6px;">&nbsp;</p>
+                            <p style="font-size:0.8rem;color:var(--text-light);">Signature: _______________</p>
+                        </div>
+                    </div>
+                    <p style="text-align:center;font-size:0.7rem;color:var(--text-light);margin-top:20px;">Generated by GDSS BIRNIWA SRMS • ${new Date().toLocaleString()}</p>
+                </div>
+            `;
+
+            document.getElementById('reportCardContainer').innerHTML = html;
+        }
+
+        function printReportCard() {
+            const content = document.getElementById('reportCardContainer').innerHTML;
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Report Card</title>
+                <style>
+                    body { font-family: 'Segoe UI', sans-serif; padding: 30px; max-width: 900px; margin: auto; }
+                    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+                    th { background: #1a4d2e; color: #fff; padding: 8px 10px; text-align: left; }
+                    td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; }
+                    .grade-A { color: #065f46; font-weight:700; }
+                    .grade-B { color: #1e40af; font-weight:700; }
+                    .grade-C { color: #92400e; font-weight:700; }
+                    .grade-D { color: #78350f; font-weight:700; }
+                    .grade-E { color: #b45309; font-weight:700; }
+                    .grade-F { color: #b91c1c; font-weight:700; }
+                    .report-card-print { max-width: 100%; }
+                    @media print { body { padding: 20px; } }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() { window.print(); }
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        // ================================================================
+        // STUDENT PORTAL
+        // ================================================================
+        function renderStudentDashboard() {
+            const student = currentUser.data;
+            if (!student) return;
+            const results = getResults().filter(r => r.studentId === student.id);
+            const attendance = getAttendance().filter(a => a.studentId === student.id);
+            const totalDays = attendance.length;
+            const daysPresent = attendance.filter(a => a.status === 'Present').length;
+            const attPercent = totalDays > 0 ? Math.round((daysPresent / totalDays) * 100) : 0;
+            const totalScore = results.reduce((s, r) => s + r.total, 0);
+            const avg = results.length > 0 ? (totalScore / results.length) : 0;
+            const grade = getGrade(avg);
+
+            // Position
+            const classStudents = getStudents().filter(s => s.class === student.class);
+            const allClassResults = getResults().filter(r => r.class === student.class);
+            const avgs = classStudents.map(st => {
+                const res = allClassResults.filter(r => r.studentId === st.id);
+                const t = res.reduce((s, r) => s + r.total, 0);
+                return { id: st.id, avg: res.length > 0 ? t / res.length : 0 };
+            });
+            const sorted = avgs.sort((a, b) => b.avg - a.avg);
+            let pos = 1,
+                prev = -1,
+                counter = 0;
+            sorted.forEach((d, i) => {
+                counter++;
+                if (d.avg !== prev) pos = counter;
+                if (d.id === student.id) { d.position = pos;
+                    prev = d.avg; } else { prev = d.avg; }
+            });
+            const position = sorted.find(d => d.id === student.id)?.position || '—';
+
+            document.getElementById('sStatResults').textContent = results.length;
+            document.getElementById('sStatAvg').textContent = avg.toFixed(1) + '%';
+            document.getElementById('sStatPosition').textContent = position + getOrdinal(position);
+            document.getElementById('sStatAttendance').textContent = attPercent + '%';
+        }
+
+        function renderStudentProfile() {
+            const student = currentUser.data;
+            if (!student) return;
+            const html = `
+                <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;">
+                    <div class="profile-avatar">${student.firstName.charAt(0)}${student.lastName.charAt(0)}</div>
+                    <div style="flex:1;">
+                        <div class="profile-info-grid">
+                            <div class="info-item"><label>Admission</label><p>${student.id}</p></div>
+                            <div class="info-item"><label>Full Name</label><p>${student.firstName} ${student.lastName}</p></div>
+                            <div class="info-item"><label>Gender</label><p>${student.gender}</p></div>
+                            <div class="info-item"><label>Date of Birth</label><p>${student.dob || '—'}</p></div>
+                            <div class="info-item"><label>Phone</label><p>${student.phone || '—'}</p></div>
+                            <div class="info-item"><label>Address</label><p>${student.address || '—'}</p></div>
+                            <div class="info-item"><label>Class</label><p>${student.class}</p></div>
+                            <div class="info-item"><label>Status</label><p><span class="badge ${student.status==='Active'?'badge-success':'badge-danger'}">${student.status}</span></p></div>
+                            <div class="info-item"><label>Session</label><p>${student.session}</p></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('studentProfileView').innerHTML = html;
+        }
+
+        function renderStudentResults() {
+            const student = currentUser.data;
+            if (!student) return;
+            const results = getResults().filter(r => r.studentId === student.id);
+            let html =
+                '<table><thead><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th><th>Remark</th><th>Term</th></tr></thead><tbody>';
+            if (results.length === 0) {
+                html += '<tr><td colspan="8" class="text-muted text-center">No results available.</td></tr>';
+            } else {
+                results.forEach(r => {
+                    html += `<tr>
+                        <td>${r.subject}</td>
+                        <td>${r.ca1}</td>
+                        <td>${r.ca2}</td>
+                        <td>${r.exam}</td>
+                        <td><strong>${r.total}</strong></td>
+                        <td class="grade-${r.grade}">${r.grade}</td>
+                        <td>${r.remark}</td>
+                        <td>${r.term}</td>
+                    </tr>`;
+                });
+                const total = results.reduce((s, r) => s + r.total, 0);
+                const avg = total / results.length;
+                html += `<tr style="font-weight:700;background:var(--bg);">
+                    <td colspan="4" style="text-align:right;">Overall Average:</td>
+                    <td colspan="4">${avg.toFixed(1)}% | Grade: ${getGrade(avg)}</td>
+                </tr>`;
+            }
+            html += '</tbody></table>';
+            document.getElementById('studentResultsView').innerHTML = html;
+        }
+
+        function renderStudentAttendance() {
+            const student = currentUser.data;
+            if (!student) return;
+            const attendance = getAttendance().filter(a => a.studentId === student.id);
+            let html =
+                '<table><thead><tr><th>Date</th><th>Status</th></tr></thead><tbody>';
+            if (attendance.length === 0) {
+                html += '<tr><td colspan="2" class="text-muted text-center">No attendance records.</td></tr>';
+            } else {
+                attendance.sort((a, b) => new Date(b.date) - new Date(a.date));
+                attendance.forEach(a => {
+                    html += `<tr>
+                        <td>${a.date}</td>
+                        <td><span class="badge ${a.status==='Present'?'badge-success':'badge-danger'}">${a.status}</span></td>
+                    </tr>`;
+                });
+                const total = attendance.length;
+                const present = attendance.filter(a => a.status === 'Present').length;
+                const pct = total > 0 ? Math.round((present / total) * 100) : 0;
+                html += `<tr style="font-weight:700;background:var(--bg);">
+                    <td>Total: ${total} days</td>
+                    <td>Present: ${present} (${pct}%)</td>
+                </tr>`;
+            }
+            html += '</tbody></table>';
+            document.getElementById('studentAttendanceView').innerHTML = html;
+        }
+
+        function renderStudentReportCard() {
+            const student = currentUser.data;
+            if (!student) return;
+            // Use the same report card generator but with student's data
+            const sel = document.getElementById('reportStudentSelect');
+            // We need to temporarily set the select to this student
+            const currentVal = sel.value;
+            sel.value = student.id;
+            // Also set term and session
+            const settings = getSettings();
+            document.getElementById('reportTermSelect').value = settings.term || 'First';
+            document.getElementById('reportSessionInput').value = settings.session || '2024/2025';
+            generateReportCard();
+            sel.value = currentVal;
+            // Copy the generated content to student report card view
+            const container = document.getElementById('reportCardContainer');
+            const content = container.innerHTML;
+            document.getElementById('studentReportCardView').innerHTML = content;
+        }
+
+        function printStudentReportCard() {
+            const content = document.getElementById('studentReportCardView').innerHTML;
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html><head><title>Report Card</title>
+                <style>
+                    body { font-family: 'Segoe UI', sans-serif; padding: 30px; max-width: 900px; margin: auto; }
+                    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+                    th { background: #1a4d2e; color: #fff; padding: 8px 10px; text-align: left; }
+                    td { padding: 6px 10px; border-bottom: 1px solid #e2e8f0; }
+                    .grade-A { color: #065f46; font-weight:700; }
+                    .grade-B { color: #1e40af; font-weight:700; }
+                    .grade-C { color: #92400e; font-weight:700; }
+                    .grade-D { color: #78350f; font-weight:700; }
+                    .grade-E { color: #b45309; font-weight:700; }
+                    .grade-F { color: #b91c1c; font-weight:700; }
+                    .report-card-print { max-width: 100%; }
+                    @media print { body { padding: 20px; } }
+                </style>
+                </head><body>
+                ${content}
+                <script>
+                    window.onload = function() { window.print(); }
+                <\/script>
+                </body></html>
+            `);
+            win.document.close();
+        }
+
+        function changeStudentPassword(e) {
+            e.preventDefault();
+            const student = currentUser.data;
+            if (!student) return;
+            const curr = document.getElementById('sCurrPass').value.trim();
+            const newPass = document.getElementById('sNewPass').value.trim();
+            const confirmPass = document.getElementById('sConfirmPass').value.trim();
+            const msg = document.getElementById('sPassMsg');
+
+            if (!verifyPass(curr, student.password)) {
+                msg.textContent = '❌ Current password is incorrect.';
+                msg.style.color = 'var(--danger)';
+                return;
+            }
+            if (newPass.length < 4) {
+                msg.textContent = '❌ Password must be at least 4 characters.';
+                msg.style.color = 'var(--danger)';
+                return;
+            }
+            if (newPass !== confirmPass) {
+                msg.textContent = '❌ Passwords do not match.';
+                msg.style.color = 'var(--danger)';
+                return;
+            }
+
+            const students = getStudents();
+            const idx = students.findIndex(s => s.id === student.id);
+            if (idx === -1) { msg.textContent = '❌ Student not found.';
+                msg.style.color = 'var(--danger)'; return; }
+            students[idx].password = hashPass(newPass);
+            setStudents(students);
+            currentUser.data = students[idx];
+            msg.textContent = '✅ Password updated successfully!';
+            msg.style.color = 'var(--success)';
+            document.getElementById('sCurrPass').value = '';
+            document.getElementById('sNewPass').value = '';
+            document.getElementById('sConfirmPass').value = '';
+        }
+
+        // ================================================================
+        // STAFF PORTAL
+        // ================================================================
+        function renderStaffDashboard() {
+            const staff = currentUser.data;
+            if (!staff) return;
+            const students = getStudents();
+            const results = getResults();
+            const attendance = getAttendance();
+            // For demo, staff sees all students (in real system, would be assigned classes)
+            const myStudents = students;
+            const myResults = results;
+            const myAttendance = attendance;
+
+            document.getElementById('tStatStudents').textContent = myStudents.length;
+            document.getElementById('tStatResults').textContent = myResults.length;
+            document.getElementById('tStatAttendance').textContent = myAttendance.length;
+        }
+
+        function renderStaffStudents() {
+            const students = getStudents();
+            let html =
+                '<table><thead><tr><th>Admission</th><th>Name</th><th>Class</th><th>Gender</th></tr></thead><tbody>';
+            if (students.length === 0) {
+                html += '<tr><td colspan="4" class="text-muted text-center">No students found.</td></tr>';
+            } else {
+                students.forEach(s => {
+                    html += `<tr>
+                        <td>${s.id}</td>
+                        <td>${s.firstName} ${s.lastName}</td>
+                        <td>${s.class}</td>
+                        <td>${s.gender}</td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table>';
+            document.getElementById('staffStudentsView').innerHTML = html;
+        }
+
+        function renderStaffResults() {
+            const results = getResults();
+            const students = getStudents();
+            let html =
+                '<table><thead><tr><th>Student</th><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th></tr></thead><tbody>';
+            if (results.length === 0) {
+                html += '<tr><td colspan="7" class="text-muted text-center">No results entered.</td></tr>';
+            } else {
+                results.forEach(r => {
+                    const student = students.find(s => s.id === r.studentId);
+                    const name = student ? student.firstName + ' ' + student.lastName : r.admissionNumber;
+                    html += `<tr>
+                        <td>${name}</td>
+                        <td>${r.subject}</td>
+                        <td>${r.ca1}</td>
+                        <td>${r.ca2}</td>
+                        <td>${r.exam}</td>
+                        <td><strong>${r.total}</strong></td>
+                        <td class="grade-${r.grade}">${r.grade}</td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table>';
+            document.getElementById('staffResultsView').innerHTML = html;
+        }
+
+        function renderStaffAttendance() {
+            const attendance = getAttendance();
+            const students = getStudents();
+            let html =
+                '<table><thead><tr><th>Student</th><th>Class</th><th>Date</th><th>Status</th></tr></thead><tbody>';
+            if (attendance.length === 0) {
+                html += '<tr><td colspan="4" class="text-muted text-center">No attendance records.</td></tr>';
+            } else {
+                attendance.forEach(a => {
+                    const student = students.find(s => s.id === a.studentId);
+                    const name = student ? student.firstName + ' ' + student.lastName : a.studentId;
+                    html += `<tr>
+                        <td>${name}</td>
+                        <td>${a.class}</td>
+                        <td>${a.date}</td>
+                        <td><span class="badge ${a.status==='Present'?'badge-success':'badge-danger'}">${a.status}</span></td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table>';
+            document.getElementById('staffAttendanceView').innerHTML = html;
+        }
+
+        function openStaffResultModal() {
+            const students = getStudents();
+            const subjects = getSubjects();
+            const terms = ['First', 'Second', 'Third'];
+            const studentOpts = students.map(s =>
+                `<option value="${s.id}">${s.firstName} ${s.lastName} (${s.id})</option>`
+            ).join('');
+            const subjectOpts = subjects.map(s =>
+                `<option value="${s}">${s}</option>`).join('');
+            const termOpts = terms.map(t =>
+                `<option value="${t}">${t}</option>`).join('');
+            const html = `
+                <form id="staffResultForm" onsubmit="saveStaffResult(event)">
+                    <div class="form-row">
+                        <div class="form-group"><label>Student</label><select id="srfStudent">${studentOpts}</select></div>
+                        <div class="form-group"><label>Subject</label><select id="srfSubject">${subjectOpts}</select></div>
+                        <div class="form-group"><label>Class</label><input type="text" id="srfClass" placeholder="Auto-filled" /></div>
+                        <div class="form-group"><label>Session</label><input type="text" id="srfSession" value="${getSettings().session}" /></div>
+                        <div class="form-group"><label>Term</label><select id="srfTerm">${termOpts}</select></div>
+                        <div class="form-group"><label>CA1 (10)</label><input type="number" id="srfCa1" min="0" max="10" required /></div>
+                        <div class="form-group"><label>CA2 (10)</label><input type="number" id="srfCa2" min="0" max="10" required /></div>
+                        <div class="form-group"><label>Examination (80)</label><input type="number" id="srfExam" min="0" max="80" required /></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Result</button>
+                    </div>
+                </form>
+                <script>
+                    document.getElementById('srfStudent').addEventListener('change', function() {
+                        const students = ${JSON.stringify(students)};
+                        const s = students.find(st => st.id === this.value);
+                        if (s) document.getElementById('srfClass').value = s.class;
+                    });
+                    // trigger on load
+                    setTimeout(() => {
+                        const sel = document.getElementById('srfStudent');
+                        if (sel) sel.dispatchEvent(new Event('change'));
+                    }, 50);
+                <\/script>
+            `;
+            openModal('Enter Result', html);
+            // Auto-fill class
+            setTimeout(() => {
+                const sel = document.getElementById('srfStudent');
+                if (sel) {
+                    const studentsData = getStudents();
+                    const s = studentsData.find(st => st.id === sel.value);
+                    if (s) document.getElementById('srfClass').value = s.class;
+                    sel.addEventListener('change', function() {
+                        const s2 = studentsData.find(st => st.id === this.value);
+                        if (s2) document.getElementById('srfClass').value = s2.class;
+                    });
+                }
+            }, 100);
+        }
+
+        function saveStaffResult(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('srfStudent').value;
+            const subject = document.getElementById('srfSubject').value;
+            const cls = document.getElementById('srfClass').value.trim();
+            const session = document.getElementById('srfSession').value.trim();
+            const term = document.getElementById('srfTerm').value;
+            const ca1 = parseFloat(document.getElementById('srfCa1').value) || 0;
+            const ca2 = parseFloat(document.getElementById('srfCa2').value) || 0;
+            const exam = parseFloat(document.getElementById('srfExam').value) || 0;
+            const total = ca1 + ca2 + exam;
+            const grade = getGrade(total);
+            const remark = getRemark(grade);
+
+            const students = getStudents();
+            const student = students.find(s => s.id === studentId);
+            const admissionNumber = student ? student.id : studentId;
+
+            const results = getResults();
+            const dup = results.some(r => r.studentId === studentId && r.subject === subject && r.term === term && r
+                .session === session);
+            if (dup) { alert('Result already exists for this student, subject, term, and session.'); return; }
+
+            results.push({
+                id: 'RES' + String(Date.now()).slice(-6),
+                studentId,
+                admissionNumber,
+                class: cls || (student ? student.class : ''),
+                session,
+                term,
+                subject,
+                ca1,
+                ca2,
+                exam,
+                total,
+                grade,
+                remark
+            });
+            setResults(results);
+            closeModal();
+            renderStaffResults();
+            renderDashboard();
+        }
+
+        function openStaffAttendanceModal() {
+            const students = getStudents();
+            const classes = getClasses();
+            const studentOpts = students.map(s =>
+                `<option value="${s.id}">${s.firstName} ${s.lastName} (${s.id})</option>`).join('');
+            const classOpts = classes.map(c =>
+                `<option value="${c}">${c}</option>`).join('');
+            const html = `
+                <form id="staffAttendanceForm" onsubmit="saveStaffAttendance(event)">
+                    <div class="form-row">
+                        <div class="form-group"><label>Student</label><select id="tafStudent">${studentOpts}</select></div>
+                        <div class="form-group"><label>Class</label><select id="tafClass">${classOpts}</select></div>
+                        <div class="form-group"><label>Date</label><input type="date" id="tafDate" value="${new Date().toISOString().slice(0,10)}" required /></div>
+                        <div class="form-group"><label>Status</label>
+                            <select id="tafStatus"><option value="Present">Present</option><option value="Absent">Absent</option></select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Record Attendance</button>
+                    </div>
+                </form>
+            `;
+            openModal('Record Attendance', html);
+        }
+
+        function saveStaffAttendance(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('tafStudent').value;
+            const cls = document.getElementById('tafClass').value;
+            const date = document.getElementById('tafDate').value;
+            const status = document.getElementById('tafStatus').value;
+
+            const attendance = getAttendance();
+            const dup = attendance.some(a => a.studentId === studentId && a.date === date);
+            if (dup) { alert('Attendance already recorded for this student on this date.'); return; }
+
+            attendance.push({
+                id: 'ATT' + String(Date.now()).slice(-6),
+                studentId,
+                class: cls,
+                date,
+                status
+            });
+            setAttendance(attendance);
+            closeModal();
+            renderStaffAttendance();
+            renderDashboard();
+        }
+
+        function changeStaffPassword(e) {
+            e.preventDefault();
+            const staff = currentUser.data;
+            if (!staff) return;
+            const curr = document.getElementById('tCurrPass').value.trim();
+            const newPass = document.getElementById('tNewPass').value.trim();
+            const confirmPass = document.getElementById('tConfirmPass').value.trim();
+            const msg = document.getElementById('tPassMsg');
+
+            if (!verifyPass(curr, staff.password)) {
+                msg.textContent = '❌ Current password is incorrect.';
+                msg.style.color = 'var(--danger)';
+                return;
+            }
+            if (newPass.length < 4) {
+                msg.textContent = '❌ Password must be at least 4 characters.';
+                msg.style.color = 'var(--danger)';
+                return;
+            }
+            if (newPass !== confirmPass) {
+                msg.textContent = '❌ Passwords do not match.';
+                msg.style.color = 'var(--danger)';
+                return;
+            }
+
+            const staffList = getStaff();
+            const idx = staffList.findIndex(s => s.id === staff.id);
+            if (idx === -1) { msg.textContent = '❌ Staff not found.';
+                msg.style.color = 'var(--danger)'; return; }
+            staffList[idx].password = hashPass(newPass);
+            setStaff(staffList);
+            currentUser.data = staffList[idx];
+            msg.textContent = '✅ Password updated successfully!';
+            msg.style.color = 'var(--success)';
+            document.getElementById('tCurrPass').value = '';
+            document.getElementById('tNewPass').value = '';
+            document.getElementById('tConfirmPass').value = '';
+        }
+
+        // ================================================================
+        // SETTINGS
+        // ================================================================
+        function saveSettings(e) {
+            e.preventDefault();
+            const settings = {
+                schoolName: document.getElementById('setSchoolName').value.trim(),
+                motto: document.getElementById('setMotto').value.trim(),
+                address: document.getElementById('setAddress').value.trim(),
+                phone: document.getElementById('setPhone').value.trim(),
+                email: document.getElementById('setEmail').value.trim(),
+                session: document.getElementById('setSession').value.trim(),
+                term: document.getElementById('setTerm').value,
+                logo: document.getElementById('setLogo').value.trim()
+            };
+            setSettings(settings);
+            applySettings();
+            document.getElementById('sidebarSchoolName').textContent = settings.schoolName;
+            alert('Settings saved successfully!');
+        }
+
+        // ================================================================
+        // PROMOTE STUDENTS
+        // ================================================================
+        function promoteStudents() {
+            const students = getStudents();
+            const classMap = {
+                'SS1A': 'SS2A',
+                'SS1B': 'SS2B',
+                'SS1C': 'SS2C',
+                'SS1D': 'SS2D',
+                'SS1E': 'SS2E',
+                'SS2A': 'SS3A',
+                'SS2B': 'SS3B',
+                'SS2C': 'SS3C',
+                'SS2D': 'SS3D',
+                'SS2E': 'SS3E',
+                'SS3A': 'SS3A',
+                'SS3B': 'SS3B',
+                'SS3C': 'SS3C',
+                'SS3D': 'SS3D',
+                'SS3E': 'SS3E'
+            };
+            let promoted = 0;
+            students.forEach(s => {
+                if (classMap[s.class] && s.class !== 'SS3A' && s.class !== 'SS3B' && s.class !== 'SS3C' &&
+                    s.class !== 'SS3D' && s.class !== 'SS3E') {
+                    s.class = classMap[s.class];
+                    promoted++;
+                }
+            });
+            setStudents(students);
+            alert(promoted + ' students promoted to the next class.');
+            renderStudents();
+            renderDashboard();
+        }
+
+        // ================================================================
+        // EXPORT / IMPORT
+        // ================================================================
+        function exportData() {
+            const data = {
+                students: getStudents(),
+                staff: getStaff(),
+                subjects: getSubjects(),
+                results: getResults(),
+                attendance: getAttendance(),
+                settings: getSettings()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gdss_data_backup.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if (data.students) setStudents(data.students);
+                    if (data.staff) setStaff(data.staff);
+                    if (data.subjects) setSubjects(data.subjects);
+                    if (data.results) setResults(data.results);
+                    if (data.attendance) setAttendance(data.attendance);
+                    if (data.settings) setSettings(data.settings);
+                    alert('Data imported successfully! Refreshing...');
+                    location.reload();
+                } catch (err) {
+                    alert('Invalid data file.');
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        }
+
+        // ================================================================
+        // INIT
+        // ================================================================
+        initSampleData();
+        initLogin();
+
+        // Also handle settings logo preview
+        document.getElementById('setLogo').addEventListener('input', function() {
+            document.getElementById('settingsLogoPreview').src = this.value || '';
+        });
+
+        // Auto-generate report card on student select change
+        document.getElementById('reportStudentSelect').addEventListener('change', generateReportCard);
+        document.getElementById('reportTermSelect').addEventListener('change', generateReportCard);
+        document.getElementById('reportSessionInput').addEventListener('change', generateReportCard);
+
+        // Close modal on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        console.log('GDSS BIRNIWA SRMS loaded successfully.');
+        console.log('Admin: admin / admin123');
+        console.log('Student: GDSS/001 / 123456');
+        console.log('Staff: STF001 / 123456');
+    </script>
+</body>
+</html>
